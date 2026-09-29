@@ -125,7 +125,7 @@ function showPostRecord(path,size){
 function setPage(page){
   $$('.page').forEach(x => x.classList.toggle('active', x.id===`page-${page}`));
   $$('.navItem').forEach(x => x.classList.toggle('active', x.dataset.page===page));
-  const map={recorder:['屏幕录制','选择来源，开始高质量录制'],library:['录制库','管理本地录制文件与截图'],settings:['设置','外观、保存、命名与快捷操作']};
+  const map={recorder:['录制工作台','高清录制屏幕、摄像头与声音，轻松创建专业视频'],library:['录制库','管理本地录制文件与截图'],settings:['偏好设置','外观、保存、命名与快捷操作']};
   $('#pageTitle').textContent=map[page][0]; $('#pageSubtitle').textContent=map[page][1];
   if(page==='library') loadLibrary();
 }
@@ -415,7 +415,7 @@ function applyQualityPreset(v){
   const map={balanced:['1920x1080','60','12000000'],smooth:['1920x1080','30','8000000'],sharp:['2560x1440','60','20000000'],ultra:['3840x2160','60','35000000']};
   if(!map[v])return;[$('#resolution').value,$('#fps').value,$('#bitrate').value]=map[v];updateQualityLabel();saveCurrentDefaults();
 }
-function updateQualityLabel(){ const t=$('#resolution').selectedOptions[0]?.textContent||'';$('#qualityLabel').textContent=`${t} · ${$('#fps').value}`; }
+function updateQualityLabel(){ const t=$('#resolution').selectedOptions[0]?.textContent||'';$('#qualityLabel').textContent=`${t} · ${$('#fps').value}FPS`; }
 async function saveCurrentDefaults(){
   await persist({resolution:$('#resolution').value,fps:+$('#fps').value,bitrate:+$('#bitrate').value,countdown:+$('#countdown').value,autoStop:+$('#autoStop').value,cameraCorner:$('#cameraCorner').value,cameraShape:$('#cameraShape').value,cameraSize:+$('#cameraSize').value,watermarkText:$('#watermarkText').value,showTimestamp:$('#timestampToggle').checked,theme:$('#themeSelect').value,micDevice:$('#micDevice')?.value||'',cameraDevice:$('#cameraDevice')?.value||'',filenamePattern:$('#filenamePattern')?.value?.trim()||'映录_{date}_{time}',usePreset:$('#usePreset')?.value||'custom',systemAudio:$('#sysAudio').checked,micAudio:$('#micAudio').checked,cameraEnabled:$('#cameraToggle').checked,keepAwake:$('#keepAwakeToggle')?.checked!==false,minimizeOnRecord:!!$('#minimizeOnRecordToggle')?.checked});
 }
@@ -483,160 +483,24 @@ window.addEventListener('beforeunload',()=>{stopRenderLoop();stopMeters();stopTr
 
 init();
 
-/* v1.7.0 hand-designed inspector navigation */
-function setInspectorPane(name){
-  $$('#inspectorTabs .inspectorTab').forEach(btn=>btn.classList.toggle('active',btn.dataset.uiPane===name));
-  $$('.toolPane[data-ui-panel]').forEach(pane=>pane.classList.toggle('active',pane.dataset.uiPanel===name));
-}
-$('#inspectorTabs')?.addEventListener('click',e=>{
-  const btn=e.target.closest('.inspectorTab');
-  if(btn) setInspectorPane(btn.dataset.uiPane);
-});
-$('#modeTabs')?.addEventListener('click',e=>{
-  const btn=e.target.closest('.modeTab');
-  if(!btn)return;
-  if(btn.dataset.mode==='device') setInspectorPane('camera');
-  else if(btn.dataset.mode==='audio') setInspectorPane('audio');
-  else setInspectorPane('quality');
-});
-
-
-/* v1.8.0 exact user-reference UI skin */
-function initPixelV18(){
-  const root=document.getElementById('pixelUI');
-  if(!root)return;
-  document.body.classList.add('pixel-skin-active');
-
-  const fire=(el,type='click')=>{
-    if(!el)return;
-    if(type==='click') el.click();
-    else el.dispatchEvent(new Event(type,{bubbles:true}));
-  };
-
-  root.querySelectorAll('[data-nav]').forEach(btn=>btn.addEventListener('click',()=>{
-    const page=btn.dataset.nav;
-    const target=document.querySelector(`#navList .navItem[data-page="${page}"]`);
-    fire(target);
-    document.body.classList.toggle('pixel-skin-active',page==='recorder');
-  }));
-
-  root.querySelectorAll('[data-mode-target]').forEach(btn=>btn.addEventListener('click',()=>{
-    const target=document.querySelector(`#modeTabs .modeTab[data-mode="${btn.dataset.modeTarget}"]`);
-    fire(target);
-  }));
-
-  const actionMap={
-    'source':'selectSourceBtn',
-    'last-source':'lastSourceBtn',
-    'save-location':'openOutputTop',
-    'shot':'shotBtn',
-    'pause':'pauseBtn',
-    'record':'recordBtn',
-    'pin':'pinBtn',
-    'min':'minBtn',
-    'max':'maxBtn',
-    'close':'closeBtn',
-    'clear-watermark':'clearWatermark'
-  };
-  root.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>{
-    fire(document.getElementById(actionMap[btn.dataset.action]));
-  }));
-
-  root.querySelectorAll('[data-toggle-target]').forEach(btn=>btn.addEventListener('click',()=>{
-    const target=document.getElementById(btn.dataset.toggleTarget);
-    if(!target)return;
-    target.checked=!target.checked;
-    fire(target,'change');
-  }));
-
-  root.querySelectorAll('[data-mirror-select]').forEach(mirror=>{
-    const syncOptions=()=>{
-      const target=document.getElementById(mirror.dataset.mirrorSelect);
-      if(!target)return;
-      if(target.options.length!==mirror.options.length ||
-         [...target.options].some((o,i)=>!mirror.options[i] || mirror.options[i].value!==o.value || mirror.options[i].text!==o.text)){
-        const value=target.value;
-        mirror.innerHTML=[...target.options].map(o=>`<option value="${escapeHtml(o.value)}">${escapeHtml(o.text)}</option>`).join('');
-        mirror.value=value;
-      }else mirror.value=target.value;
-    };
-    syncOptions();
-    mirror.addEventListener('pointerdown',syncOptions);
-    mirror.addEventListener('focus',syncOptions);
-    mirror.addEventListener('change',()=>{
-      const target=document.getElementById(mirror.dataset.mirrorSelect);
-      if(!target)return;
-      target.value=mirror.value;
-      fire(target,'change');
-    });
-    mirror._pixelSync=syncOptions;
-  });
-
-  root.querySelectorAll('[data-mirror-input]').forEach(mirror=>{
-    const target=document.getElementById(mirror.dataset.mirrorInput);
-    if(target)mirror.value=target.value;
-    mirror.addEventListener('input',()=>{
-      const t=document.getElementById(mirror.dataset.mirrorInput);
-      if(!t)return;
-      t.value=mirror.value;
-      fire(t,'input');
-    });
-    mirror.addEventListener('change',()=>{
-      const t=document.getElementById(mirror.dataset.mirrorInput);
-      if(t)fire(t,'change');
-    });
-  });
-
-  const pVideo=document.getElementById('pixelPreviewVideo');
-  const pCam=document.getElementById('pixelCameraVideo');
-  const pTimer=document.getElementById('pixelTimer');
-  const pRecordLabel=document.getElementById('pixelRecordLabel');
-  const pSourceStatus=document.getElementById('pixelSourceStatus');
-
-  function syncPixelState(){
-    root.querySelectorAll('[data-mirror-select]').forEach(x=>x._pixelSync?.());
-
-    if(pVideo && preview){
-      const next=preview.srcObject||null;
-      if(pVideo.srcObject!==next)pVideo.srcObject=next;
-      pVideo.classList.toggle('live',!!next);
-      if(next && pVideo.paused)pVideo.play().catch(()=>{});
-    }
-
-    if(pCam && cameraVideo){
-      const next=cameraVideo.srcObject||null;
-      if(pCam.srcObject!==next)pCam.srcObject=next;
-      const enabled=!!next && !cameraVideo.classList.contains('hidden');
-      pCam.className='pixelCameraVideo'+(enabled?' live':'');
-      if(enabled){
-        const corner=document.getElementById('cameraCorner')?.value||'br';
-        const shape=document.getElementById('cameraShape')?.value||'rounded';
-        const size=+(document.getElementById('cameraSize')?.value||24);
-        pCam.classList.add(corner,shape);
-        pCam.style.width=`${Math.max(9,Math.min(18,size*.48))}%`;
-        if(shape!=='circle')pCam.style.aspectRatio='16 / 9';
-        else pCam.style.aspectRatio='1 / 1';
-        if(pCam.paused)pCam.play().catch(()=>{});
-      }
-    }
-
-    const isRecording=document.getElementById('recordBtn')?.classList.contains('stop');
-    if(pTimer){
-      pTimer.textContent=document.getElementById('timer')?.textContent||'00:00:00';
-      pTimer.classList.toggle('active',!!isRecording);
-    }
-    if(pRecordLabel){
-      pRecordLabel.textContent=document.getElementById('recordLabel')?.textContent||'开始录制';
-      pRecordLabel.classList.toggle('active',!!isRecording);
-    }
-    if(pSourceStatus){
-      const name=document.getElementById('selectedSourceLabel')?.textContent||'';
-      const hasSource=!!preview?.srcObject;
-      pSourceStatus.textContent=hasSource?name:'';
-      pSourceStatus.classList.toggle('active',hasSource && !!name);
-    }
+/* v1.9.0 real-control UI interactions */
+function setTargetInspectorTab(name){
+  $$('#targetInspectorTabs button').forEach(b=>b.classList.toggle('active',b.dataset.targetTab===name));
+  document.body.classList.toggle('preview-focus',name==='preview');
+  if(name==='control'){
+    $('#inspectorScroll')?.scrollTo({top:0,behavior:'smooth'});
+  }else if(name==='more'){
+    document.body.classList.remove('preview-focus');
+    $('#qualitySection')?.scrollIntoView({behavior:'smooth',block:'start'});
   }
-  syncPixelState();
-  setInterval(syncPixelState,250);
 }
-setTimeout(initPixelV18,60);
+$('#targetInspectorTabs')?.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-target-tab]');
+  if(b)setTargetInspectorTab(b.dataset.targetTab);
+});
+$('#previewSnapBtn')?.addEventListener('click',()=>$('#shotBtn')?.click());
+$('#previewRefreshBtn')?.addEventListener('click',()=>$('#selectSourceBtn')?.click());
+$('#previewFocusBtn')?.addEventListener('click',()=>{
+  const next=document.body.classList.contains('preview-focus')?'control':'preview';
+  setTargetInspectorTab(next);
+});
