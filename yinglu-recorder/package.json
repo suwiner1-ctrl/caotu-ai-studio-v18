@@ -1,7 +1,7 @@
 {
   "name": "yinglu-screen",
   "productName": "映录 Screen",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Professional Windows screen recorder",
   "main": "main.js",
   "author": "YingLu Studio",
@@ -27,9 +27,8 @@
       "preload.js",
       "index.html",
       "styles.css",
+      "ui-v19.css",
       "renderer.js",
-      "design-v17.css",
-      "pixel-v18.css",
       "assets/ui-v18.webp"
     ],
     "win": {
