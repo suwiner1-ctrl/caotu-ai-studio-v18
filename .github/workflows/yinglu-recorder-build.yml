@@ -19,6 +19,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore v1.1.0 application bundle
+        shell: pwsh
+        run: |
+          $b64 = (Get-Content ".bundle/part00" -Raw).Trim() + (Get-Content ".bundle/part01" -Raw).Trim() + (Get-Content ".bundle/part02" -Raw).Trim()
+          [IO.File]::WriteAllBytes("app-v1.1.0.zip", [Convert]::FromBase64String($b64))
+          Expand-Archive -Path "app-v1.1.0.zip" -DestinationPath "." -Force
+          Remove-Item "app-v1.1.0.zip"
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -31,6 +39,7 @@ jobs:
         run: |
           node --check main.js
           node --check preload.js
+          node --check renderer.js
 
       - name: Build Windows EXEs
         env:
@@ -41,21 +50,23 @@ jobs:
         shell: pwsh
         run: |
           $files = @(
-            "dist/YingLuScreen-Setup-1.0.0.exe",
-            "dist/YingLuScreen-Portable-1.0.0.exe"
+            "dist/YingLuScreen-Setup-1.1.0.exe",
+            "dist/YingLuScreen-Portable-1.1.0.exe"
           )
           foreach($f in $files){
             if(!(Test-Path $f)){ throw "Missing $f" }
             if((Get-Item $f).Length -lt 30000000){ throw "Unexpectedly small $f" }
+            $bytes = [IO.File]::ReadAllBytes($f)
+            if($bytes[0] -ne 0x4D -or $bytes[1] -ne 0x5A){ throw "Not a valid PE executable: $f" }
           }
           Get-FileHash $files -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  $([IO.Path]::GetFileName($_.Path))" } | Set-Content -Encoding ascii dist/SHA256SUMS.txt
 
       - uses: actions/upload-artifact@v4
         with:
-          name: YingLuScreen-Windows-v1.0.0
+          name: YingLuScreen-Windows-v1.1.0
           path: |
-            yinglu-recorder/dist/YingLuScreen-Setup-1.0.0.exe
-            yinglu-recorder/dist/YingLuScreen-Portable-1.0.0.exe
+            yinglu-recorder/dist/YingLuScreen-Setup-1.1.0.exe
+            yinglu-recorder/dist/YingLuScreen-Portable-1.1.0.exe
             yinglu-recorder/dist/SHA256SUMS.txt
           if-no-files-found: error
           compression-level: 0
