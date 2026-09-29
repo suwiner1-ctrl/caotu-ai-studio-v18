@@ -1,7 +1,7 @@
 {
   "name": "yinglu-screen",
   "productName": "映录 Screen",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Professional Windows screen recorder",
   "main": "main.js",
   "author": "YingLu Studio",
@@ -20,12 +20,13 @@
     "executableName": "YingLuScreen",
     "asar": true,
     "directories": {"output":"dist"},
-    "files": ["main.js","preload.js","index.html"],
+    "files": ["main.js","preload.js","index.html","styles.css","renderer.js","assets/icon.ico"],
     "win": {
       "target": [
         {"target":"nsis","arch":["x64"]},
         {"target":"portable","arch":["x64"]}
-      ]
+      ],
+      "icon": "assets/icon.ico"
     },
     "nsis": {
       "artifactName": "YingLuScreen-Setup-${version}.${ext}",
