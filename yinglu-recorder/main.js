@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, desktopCapturer, session, dialog, shell, globalShortcut } = require('electron');
+const { app, BrowserWindow, ipcMain, desktopCapturer, session, dialog, shell, globalShortcut, powerSaveBlocker } = require('electron');
 const fs = require('fs');
 const path = require('path');
 
@@ -10,6 +10,8 @@ if (portable && process.env.PORTABLE_EXECUTABLE_DIR) {
 let win;
 let selectedSourceId = null;
 let selectedSourceAudio = true;
+let powerBlockId = null;
+let minimizedForRecording = false;
 
 const DEFAULTS = {
   outputDir: '',
@@ -33,7 +35,9 @@ const DEFAULTS = {
   usePreset: 'custom',
   systemAudio: true,
   micAudio: true,
-  cameraEnabled: false
+  cameraEnabled: false,
+  keepAwake: true,
+  minimizeOnRecord: false
 };
 
 function settingsFile(){ return path.join(app.getPath('userData'), 'settings.json'); }
@@ -70,7 +74,9 @@ function createWindow(){
     height: 940,
     minWidth: 1180,
     minHeight: 760,
-    title: '映录 Screen',    backgroundColor: '#F4F6FA',
+    title: '映录 Screen',
+    icon: path.join(__dirname, 'assets', 'icon.ico'),
+    backgroundColor: '#F4F6FA',
     frame: false,
     show: false,
     webPreferences: {
@@ -109,7 +115,10 @@ app.whenReady().then(() => {
   registerShortcuts();
 });
 
-app.on('will-quit', () => globalShortcut.unregisterAll());
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll();
+  if (powerBlockId !== null && powerSaveBlocker.isStarted(powerBlockId)) powerSaveBlocker.stop(powerBlockId);
+});
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
 
@@ -143,6 +152,30 @@ ipcMain.handle('system:storage', () => {
     return { free: Number(st.bavail) * Number(st.bsize), total: Number(st.blocks) * Number(st.bsize) };
   } catch { return null; }
 });
+
+ipcMain.handle('recording:guard', (_, payload = {}) => {
+  const enabled = !!payload.enabled;
+  if (enabled) {
+    if (payload.keepAwake !== false && (powerBlockId === null || !powerSaveBlocker.isStarted(powerBlockId))) {
+      powerBlockId = powerSaveBlocker.start('prevent-display-sleep');
+    }
+    if (payload.minimize && win && !win.isMinimized()) {
+      minimizedForRecording = true;
+      win.minimize();
+    }
+  } else {
+    if (powerBlockId !== null && powerSaveBlocker.isStarted(powerBlockId)) powerSaveBlocker.stop(powerBlockId);
+    powerBlockId = null;
+    if (minimizedForRecording && win) {
+      minimizedForRecording = false;
+      if (win.isMinimized()) win.restore();
+      win.show();
+      win.focus();
+    }
+  }
+  return { enabled, keepAwake: powerBlockId !== null, minimized: minimizedForRecording };
+});
+
 ipcMain.handle('settings:choose-output', async () => {
   const r = await dialog.showOpenDialog(win, { properties: ['openDirectory', 'createDirectory'] });
   if (r.canceled || !r.filePaths[0]) return null;
