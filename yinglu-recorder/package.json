@@ -1,8 +1,8 @@
 {
   "name": "yinglu-screen",
   "productName": "映录 Screen",
-  "version": "1.0.0",
-  "description": "Windows screen recorder",
+  "version": "1.2.0",
+  "description": "Professional Windows screen recorder",
   "main": "main.js",
   "author": "YingLu Studio",
   "license": "MIT",
@@ -19,7 +19,7 @@
     "productName": "映录 Screen",
     "executableName": "YingLuScreen",
     "asar": true,
-    "directories": { "output": "dist" },
+    "directories": {"output":"dist"},
     "files": ["main.js","preload.js","index.html"],
     "win": {
       "target": [

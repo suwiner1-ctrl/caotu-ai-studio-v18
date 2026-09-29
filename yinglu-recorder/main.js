@@ -24,7 +24,16 @@ const DEFAULTS = {
   cameraSize: 24,
   watermarkText: '',
   showTimestamp: false,
-  rememberPreview: true
+  rememberPreview: true,
+  filenamePattern: '映录_{date}_{time}',
+  lastSourceName: '',
+  lastSourceType: '',
+  micDevice: '',
+  cameraDevice: '',
+  usePreset: 'custom',
+  systemAudio: true,
+  micAudio: true,
+  cameraEnabled: false
 };
 
 function settingsFile(){ return path.join(app.getPath('userData'), 'settings.json'); }
@@ -61,8 +70,7 @@ function createWindow(){
     height: 940,
     minWidth: 1180,
     minHeight: 760,
-    title: '映录 Screen',
-    backgroundColor: '#F4F6FA',
+    title: '映录 Screen',    backgroundColor: '#F4F6FA',
     frame: false,
     show: false,
     webPreferences: {
@@ -127,6 +135,14 @@ ipcMain.handle('sources:choose', (_, p) => {
 
 ipcMain.handle('settings:get', () => readSettings());
 ipcMain.handle('settings:save', (_, next) => saveSettings(next));
+ipcMain.handle('system:storage', () => {
+  try {
+    const dir = ensureDir(readSettings().outputDir);
+    if (typeof fs.statfsSync !== 'function') return null;
+    const st = fs.statfsSync(dir);
+    return { free: Number(st.bavail) * Number(st.bsize), total: Number(st.blocks) * Number(st.bsize) };
+  } catch { return null; }
+});
 ipcMain.handle('settings:choose-output', async () => {
   const r = await dialog.showOpenDialog(win, { properties: ['openDirectory', 'createDirectory'] });
   if (r.canceled || !r.filePaths[0]) return null;

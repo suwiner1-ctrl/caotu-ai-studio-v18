@@ -4,7 +4,10 @@ on:
   push:
     branches: [ yinglu-recorder-build-v1 ]
     paths:
-      - 'yinglu-recorder/**'
+      - 'yinglu-recorder/main.js'
+      - 'yinglu-recorder/preload.js'
+      - 'yinglu-recorder/index.html'
+      - 'yinglu-recorder/package.json'
       - '.github/workflows/yinglu-recorder-build.yml'
   workflow_dispatch:
 
@@ -15,43 +18,32 @@ jobs:
     defaults:
       run:
         working-directory: yinglu-recorder
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Restore v1.1.0 application bundle
-        shell: pwsh
-        run: |
-          $b64 = (Get-Content ".bundle/part00" -Raw).Trim() + (Get-Content ".bundle/part01" -Raw).Trim() + (Get-Content ".bundle/part02" -Raw).Trim()
-          [IO.File]::WriteAllBytes("app-v1.1.0.zip", [Convert]::FromBase64String($b64))
-          Expand-Archive -Path "app-v1.1.0.zip" -DestinationPath "." -Force
-          Remove-Item "app-v1.1.0.zip"
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-
       - name: Validate
         shell: pwsh
         run: |
           node --check main.js
           node --check preload.js
-          node --check renderer.js
-
+          $html = Get-Content index.html -Raw
+          if($html -notmatch "PRO RECORDER"){ throw "UI payload missing" }
+          if($html -notmatch "录制就绪检查"){ throw "v1.2.0 UI marker missing" }
+          if((Get-Content package.json -Raw | ConvertFrom-Json).version -ne "1.2.0"){ throw "Wrong version" }
       - name: Build Windows EXEs
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
         run: npx electron-builder --win nsis portable --x64
-
       - name: Verify products
         shell: pwsh
         run: |
           $files = @(
-            "dist/YingLuScreen-Setup-1.1.0.exe",
-            "dist/YingLuScreen-Portable-1.1.0.exe"
+            "dist/YingLuScreen-Setup-1.2.0.exe",
+            "dist/YingLuScreen-Portable-1.2.0.exe"
           )
           foreach($f in $files){
             if(!(Test-Path $f)){ throw "Missing $f" }
@@ -60,13 +52,12 @@ jobs:
             if($bytes[0] -ne 0x4D -or $bytes[1] -ne 0x5A){ throw "Not a valid PE executable: $f" }
           }
           Get-FileHash $files -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  $([IO.Path]::GetFileName($_.Path))" } | Set-Content -Encoding ascii dist/SHA256SUMS.txt
-
       - uses: actions/upload-artifact@v4
         with:
-          name: YingLuScreen-Windows-v1.1.0
+          name: YingLuScreen-Windows-v1.2.0
           path: |
-            yinglu-recorder/dist/YingLuScreen-Setup-1.1.0.exe
-            yinglu-recorder/dist/YingLuScreen-Portable-1.1.0.exe
+            yinglu-recorder/dist/YingLuScreen-Setup-1.2.0.exe
+            yinglu-recorder/dist/YingLuScreen-Portable-1.2.0.exe
             yinglu-recorder/dist/SHA256SUMS.txt
           if-no-files-found: error
           compression-level: 0
