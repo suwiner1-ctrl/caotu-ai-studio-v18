@@ -1,0 +1,132 @@
+/* v1.8.0 — exact screenshot skin from user-provided second reference */
+.pixelUI{
+  position:fixed;inset:0;z-index:700;
+  background:#f6f8fc;overflow:hidden;
+  user-select:none;-webkit-user-select:none;
+}
+.pixelFrame{position:absolute;inset:0;width:100%;height:100%}
+.pixelArtwork{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:fill;display:block;pointer-events:none;
+}
+body.pixel-skin-active{overflow:hidden}
+body.pixel-skin-active .shell{
+  position:fixed!important;left:-200vw!important;top:0!important;
+  width:1586px!important;height:992px!important;
+  opacity:0!important;pointer-events:none!important;
+}
+body:not(.pixel-skin-active) .pixelUI{display:none}
+.modal,.postRecordBar,.countdownOverlay,.toastStack{z-index:1500!important}
+
+/* real preview is inserted into the exact preview rectangle of the second screenshot */
+.pixelPreviewVideo{
+  position:absolute;left:18.54%;top:21.57%;width:49.37%;height:66.13%;
+  object-fit:contain;background:#071126;border-radius:13px;
+  display:none;z-index:2;
+}
+.pixelPreviewVideo.live{display:block}
+.pixelCameraVideo{
+  position:absolute;display:none;z-index:5;object-fit:cover;
+  border:3px solid rgba(255,255,255,.96);
+  box-shadow:0 8px 28px rgba(0,0,0,.20);
+}
+.pixelCameraVideo.live{display:block}
+.pixelCameraVideo.br{right:33.1%;bottom:15.5%}
+.pixelCameraVideo.bl{left:20.3%;bottom:15.5%}
+.pixelCameraVideo.tr{right:33.1%;top:24.5%}
+.pixelCameraVideo.tl{left:20.3%;top:24.5%}
+.pixelCameraVideo.rounded{border-radius:16px}
+.pixelCameraVideo.circle{border-radius:999px;aspect-ratio:1/1}
+.pixelCameraVideo.square{border-radius:3px}
+.pixelRegionBox{
+  position:absolute;display:none;z-index:6;
+  left:18.54%;top:21.57%;width:49.37%;height:66.13%;
+  border:2px solid #3f86ff;background:rgba(63,134,255,.06);pointer-events:none;
+}
+
+/* invisible functional hit-map: positions are directly measured from the target screenshot */
+.pixelHotspot,.pixelSelect,.pixelInput{
+  position:absolute;z-index:20;border:0;background:transparent;
+}
+.pixelHotspot{opacity:.001;cursor:pointer}
+.pixelHotspot:hover{opacity:.02;background:#fff}
+.pixelSelect{opacity:.001;cursor:pointer}
+.pixelInput{opacity:.001;cursor:text;color:transparent}
+
+/* sidebar */
+.navRecord{left:1.55%;top:12.00%;width:13.55%;height:5.95%}
+.navLibrary{left:1.55%;top:19.55%;width:13.55%;height:5.80%}
+.navSettings{left:1.55%;top:27.05%;width:13.55%;height:5.85%}
+
+/* top capture modes */
+.modeFull{left:18.05%;top:11.50%;width:7.75%;height:6.55%}
+.modeWindow{left:26.10%;top:11.50%;width:7.45%;height:6.55%}
+.modeRegion{left:34.00%;top:11.50%;width:7.10%;height:6.55%}
+.modeCamera{left:41.55%;top:11.50%;width:8.15%;height:6.55%}
+.modeAudio{left:49.85%;top:11.50%;width:8.55%;height:6.55%}
+.usePresetMirror{left:71.65%;top:11.55%;width:10.75%;height:6.30%}
+.qualityPresetMirror{left:83.05%;top:11.55%;width:11.70%;height:6.30%}
+
+/* preview actions */
+.lastSourceTop{left:50.05%;top:22.85%;width:7.05%;height:4.55%}
+.chooseSourceTop{left:57.35%;top:22.85%;width:7.30%;height:4.55%}
+.chooseSourceMain{left:35.85%;top:59.95%;width:12.05%;height:6.15%}
+
+/* titlebar actions */
+.saveLocation{left:75.90%;top:2.50%;width:7.95%;height:4.55%}
+.pinHotspot{left:84.25%;top:2.30%;width:3.10%;height:4.80%}
+.minHotspot{left:87.65%;top:2.30%;width:2.75%;height:4.80%}
+.maxHotspot{left:90.65%;top:2.30%;width:2.75%;height:4.80%}
+.closeHotspot{left:93.60%;top:2.30%;width:2.75%;height:4.80%}
+
+/* right inspector */
+.sysToggle{left:91.45%;top:31.75%;width:3.55%;height:3.60%}
+.micToggle{left:91.45%;top:36.20%;width:3.55%;height:3.60%}
+.micDeviceMirror{left:76.10%;top:41.70%;width:18.20%;height:4.10%}
+.camToggle{left:91.40%;top:47.60%;width:3.55%;height:3.60%}
+.cameraDeviceMirror{left:76.05%;top:52.65%;width:18.25%;height:4.05%}
+.cameraCornerMirror{left:69.25%;top:57.95%;width:7.65%;height:4.15%}
+.cameraShapeMirror{left:77.25%;top:57.95%;width:8.25%;height:4.15%}
+.cameraSizeMirror{left:86.10%;top:57.95%;width:8.20%;height:4.15%}
+.resolutionMirror{left:69.20%;top:70.65%;width:7.85%;height:4.15%}
+.fpsMirror{left:77.20%;top:70.65%;width:8.20%;height:4.15%}
+.bitrateMirror{left:86.05%;top:70.65%;width:8.25%;height:4.15%}
+.countdownMirror{left:69.20%;top:76.15%;width:11.30%;height:4.10%}
+.autoStopMirror{left:81.35%;top:76.15%;width:12.95%;height:4.10%}
+.timeToggle{left:91.40%;top:81.85%;width:3.55%;height:3.50%}
+.watermarkMirror{left:69.20%;top:85.20%;width:21.55%;height:3.80%}
+.clearWatermarkHotspot{left:91.45%;top:85.20%;width:3.15%;height:3.80%}
+
+/* bottom dock */
+.shotHotspot{left:39.30%;top:88.05%;width:7.30%;height:5.40%}
+.pauseHotspot{left:47.00%;top:88.05%;width:7.20%;height:5.40%}
+.recordHotspot{left:55.05%;top:87.55%;width:11.60%;height:6.05%}
+
+/* dynamic state overlays shown only when values differ from screenshot default */
+.pixelDynamic{position:absolute;z-index:12;display:none;pointer-events:none}
+.pixelTimer.active{
+  display:flex;align-items:center;
+  left:20.45%;top:89.42%;width:7.15%;height:3.50%;
+  background:#fff;color:#0d1830;
+  font:700 20px/1 "Segoe UI","Microsoft YaHei UI",sans-serif;
+}
+.pixelRecordLabel.active{
+  display:flex;align-items:center;justify-content:center;
+  left:55.25%;top:88.10%;width:8.20%;height:4.60%;
+  color:#fff;font:700 15px/1 "Microsoft YaHei UI",sans-serif;
+}
+.pixelSourceStatus.active{
+  display:flex;align-items:center;
+  left:19.60%;top:80.35%;max-width:23%;height:3.20%;
+  padding:0 10px;border-radius:9px;
+  background:rgba(5,16,37,.78);color:#eaf2ff;
+  font:600 12px/1 "Microsoft YaHei UI",sans-serif;
+}
+
+/* preserve target aspect ratio on very different monitor sizes */
+@media (max-aspect-ratio: 1.45/1){
+  .pixelFrame{width:100%;height:auto;aspect-ratio:1586/992;top:50%;transform:translateY(-50%)}
+}
+@media (min-aspect-ratio: 1.75/1){
+  .pixelFrame{height:100%;width:auto;aspect-ratio:1586/992;left:50%;transform:translateX(-50%)}
+}
