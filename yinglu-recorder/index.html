@@ -49,83 +49,75 @@
   <aside class="sidebar">
     <div class="brandBlock">
       <div class="brandMark"><svg><use href="#i-logo"/></svg></div>
-      <div class="brandCopy"><strong>映录 Screen</strong><span>PRO RECORDER</span></div>
+      <div class="brandCopy"><strong>映录</strong><span>Screen Recorder</span></div>
     </div>
 
     <nav class="navList" id="navList">
-      <button class="navItem active" data-page="recorder"><svg><use href="#i-record"/></svg><span>录制工作台</span></button>
-      <button class="navItem" data-page="library"><svg><use href="#i-library"/></svg><span>录制库</span><em id="libraryCount">0</em></button>
-      <button class="navItem" data-page="settings"><svg><use href="#i-settings"/></svg><span>偏好设置</span></button>
+      <button class="navItem active" data-page="recorder"><span class="navIcon"><svg><use href="#i-record"/></svg></span><span>录制</span></button>
+      <button class="navItem" data-page="library"><span class="navIcon"><svg><use href="#i-library"/></svg></span><span>录制库</span><em id="libraryCount">0</em></button>
+      <button class="navItem" data-page="settings"><span class="navIcon"><svg><use href="#i-settings"/></svg></span><span>设置</span></button>
     </nav>
 
     <div class="sidebarInfo">
-      <div class="sideInfoHead"><svg><use href="#i-shield"/></svg><span>本地安全录制</span></div>
-      <p>视频默认仅保存到你的电脑，不上传云端。</p>
-    </div>
-
-    <div class="sidebarBottom">
-      <div class="shortcutTitle">全局快捷键</div>
-      <div class="hotkeyHint"><kbd>F9</kbd><span>开始 / 停止</span></div>
-      <div class="hotkeyHint"><kbd>F10</kbd><span>暂停 / 继续</span></div>
-      <div class="hotkeyHint"><kbd>F11</kbd><span>快速截图</span></div>
-      <div class="privacyNote"><svg><use href="#i-disk"/></svg><span>自动检查磁盘空间与设备状态</span></div>
+      <div class="sideInfoHead"><svg><use href="#i-shield"/></svg><span>本地录制</span></div>
+      <p>文件仅保存在你的电脑中。</p>
     </div>
   </aside>
 
   <section class="workspace">
     <header class="titlebar">
       <div class="titleDrag">
-        <div class="pageTitle"><strong id="pageTitle">录制工作台</strong><span id="pageSubtitle">专业录屏控制中心</span></div>
+        <div class="pageTitle"><strong id="pageTitle">屏幕录制</strong><span id="pageSubtitle">选择来源，开始高质量录制</span></div>
       </div>
       <div class="titleActions">
-        <button class="topAction primaryTop" id="quickRecordBtn"><svg><use href="#i-record"/></svg><span>一键录制</span></button>
-        <button class="topAction" id="openOutputTop"><svg><use href="#i-folder"/></svg><span>保存目录</span></button>
+        <button class="topAction" id="openOutputTop"><svg><use href="#i-folder"/></svg><span>保存位置</span></button>
         <button class="iconBtn" id="pinBtn" title="窗口置顶"><svg><use href="#i-pin"/></svg></button>
         <span class="titleDivider"></span>
         <button class="windowBtn" id="minBtn" title="最小化"><svg><use href="#i-minus"/></svg></button>
         <button class="windowBtn" id="maxBtn" title="最大化"><svg><use href="#i-max"/></svg></button>
         <button class="windowBtn close" id="closeBtn" title="关闭"><svg><use href="#i-close"/></svg></button>
+        <button class="hiddenCompat" id="quickRecordBtn" aria-hidden="true"></button>
       </div>
     </header>
 
     <main class="pageWrap">
       <section class="page active recorderPage" id="page-recorder">
         <section class="captureCommandBar">
-          <div class="modeGroup">
-            <div class="sectionCaption"><span>录制模式</span><small>选择要捕获的内容</small></div>
+          <div class="modeBlock">
+            <span class="modeLabel">录制方式</span>
             <div class="modeTabs" id="modeTabs">
-              <button class="modeTab active" data-mode="screen"><svg><use href="#i-monitor"/></svg><span><b>全屏</b><small>显示器</small></span></button>
-              <button class="modeTab" data-mode="window"><svg><use href="#i-window"/></svg><span><b>窗口</b><small>单应用</small></span></button>
-              <button class="modeTab" data-mode="region"><svg><use href="#i-crop"/></svg><span><b>区域</b><small>自定义</small></span></button>
-              <button class="modeTab" data-mode="device"><svg><use href="#i-camera"/></svg><span><b>摄像头</b><small>设备录制</small></span></button>
-              <button class="modeTab" data-mode="audio"><svg><use href="#i-mic"/></svg><span><b>音频</b><small>纯音频</small></span></button>
+              <button class="modeTab active" data-mode="screen"><svg><use href="#i-monitor"/></svg><span>全屏</span></button>
+              <button class="modeTab" data-mode="window"><svg><use href="#i-window"/></svg><span>窗口</span></button>
+              <button class="modeTab" data-mode="region"><svg><use href="#i-crop"/></svg><span>区域</span></button>
+              <button class="modeTab" data-mode="device"><svg><use href="#i-camera"/></svg><span>摄像头</span></button>
+              <button class="modeTab" data-mode="audio"><svg><use href="#i-mic"/></svg><span>音频</span></button>
             </div>
           </div>
           <div class="presetGroup">
-            <label class="presetBox"><span>用途预设</span><select id="usePreset"><option value="custom">自定义</option><option value="presentation">演示讲解</option><option value="course">课程录制</option><option value="meeting">会议录制</option><option value="game">游戏录制</option></select></label>
-            <label class="presetBox"><span>画质预设</span><select id="qualityPreset"><option value="balanced">均衡 · 1080P 60</option><option value="smooth">流畅 · 1080P 30</option><option value="sharp">高清 · 2K 60</option><option value="ultra">超清 · 4K 60</option></select></label>
+            <label class="presetBox"><span>用途</span><select id="usePreset"><option value="custom">自定义</option><option value="presentation">演示讲解</option><option value="course">课程录制</option><option value="meeting">会议录制</option><option value="game">游戏录制</option></select></label>
+            <label class="presetBox"><span>画质</span><select id="qualityPreset"><option value="balanced">1080P · 60</option><option value="smooth">1080P · 30</option><option value="sharp">2K · 60</option><option value="ultra">4K · 60</option></select></label>
           </div>
         </section>
 
         <section class="readinessBar">
-          <div class="readinessIntro"><svg><use href="#i-check"/></svg><div><strong>录制环境</strong><span>关键项目实时检查</span></div></div>
-          <div class="readyItem" id="sourceReady"><i></i><svg><use href="#i-select"/></svg><span><b>来源</b><small>未选择</small></span></div>
-          <div class="readyItem" id="micReady"><i></i><svg><use href="#i-mic"/></svg><span><b>麦克风</b><small>检测中</small></span></div>
-          <div class="readyItem" id="cameraReady"><i></i><svg><use href="#i-camera"/></svg><span><b>摄像头</b><small>检测中</small></span></div>
-          <div class="readyItem" id="storageReady"><i></i><svg><use href="#i-disk"/></svg><span><b>磁盘</b><small>检测中</small></span></div>
-          <button class="checkBtn" id="runCheckBtn"><svg><use href="#i-refresh"/></svg><span>重新检查</span></button>
+          <div class="readinessIntro"><span class="readyPulse"></span><strong>录制状态</strong></div>
+          <div class="readyItem" id="sourceReady"><svg><use href="#i-select"/></svg><span><b>来源</b><small>未选择</small></span></div>
+          <div class="readyItem" id="micReady"><svg><use href="#i-mic"/></svg><span><b>麦克风</b><small>检测中</small></span></div>
+          <div class="readyItem" id="cameraReady"><svg><use href="#i-camera"/></svg><span><b>摄像头</b><small>检测中</small></span></div>
+          <div class="readyItem" id="storageReady"><svg><use href="#i-disk"/></svg><span><b>磁盘</b><small>检测中</small></span></div>
+          <button class="checkBtn" id="runCheckBtn"><svg><use href="#i-refresh"/></svg><span>检查</span></button>
         </section>
 
         <div class="studioBody">
           <section class="previewCard">
             <div class="previewHeader">
               <div class="previewHeading">
-                <div class="eyebrow">LIVE PREVIEW</div>
+                <span>实时画面</span>
                 <h2 id="sourceHeading">尚未选择录制来源</h2>
               </div>
               <div class="headerTools">
                 <button class="softBtn hidden" id="lastSourceBtn"><svg><use href="#i-back"/></svg><span>上次来源</span></button>
-                <button class="softBtn" id="selectSourceBtn"><svg><use href="#i-select"/></svg><span>选择来源</span></button>
+                <button class="primarySoft" id="selectSourceBtn"><svg><use href="#i-select"/></svg><span>选择来源</span></button>
                 <button class="softBtn hidden" id="regionPickBtn"><svg><use href="#i-crop"/></svg><span>框选区域</span></button>
               </div>
             </div>
@@ -133,9 +125,9 @@
             <div class="previewStage" id="previewStage">
               <div class="emptyPreview" id="emptyPreview">
                 <div class="emptyGraphic"><svg><use href="#i-monitor"/></svg></div>
-                <h3>选择屏幕或窗口开始实时预览</h3>
-                <p>画面、音频、摄像头与叠加效果会在录制前完成检查。</p>
-                <button class="primarySoft" id="emptySelectBtn"><svg><use href="#i-select"/></svg><span>选择录制来源</span></button>
+                <h3>选择屏幕或窗口开始预览</h3>
+                <p>录制前会自动检查声音、摄像头与保存空间。</p>
+                <button class="primarySoft emptyAction" id="emptySelectBtn"><svg><use href="#i-select"/></svg><span>选择录制来源</span></button>
               </div>
               <video id="previewVideo" autoplay muted playsinline class="hidden"></video>
               <video id="cameraVideo" autoplay muted playsinline class="cameraPreview hidden"></video>
@@ -151,46 +143,57 @@
 
           <aside class="inspectorPanel">
             <div class="inspectorTitle">
-              <div><div class="eyebrow">CONTROL CENTER</div><h3>录制控制</h3></div>
-              <span class="statusPill">实时生效</span>
+              <div><strong>录制设置</strong><span>实时生效</span></div>
+              <span class="inspectorBadge">专业模式</span>
             </div>
 
-            <section class="controlSection audioSection">
-              <div class="controlSectionHead"><div class="headingWithIcon"><svg><use href="#i-audio"/></svg><div><strong>音频混音</strong><span>系统声音与麦克风</span></div></div><span class="statusPill" id="audioStatus">待机</span></div>
-              <div class="audioRows">
-                <div class="mixerRow"><div class="mixerLabel"><strong>系统声音</strong><span>桌面 / 应用</span></div><div class="meter"><i id="systemMeter"></i></div><label class="toggle"><input type="checkbox" id="sysAudio" checked><i></i></label></div>
-                <div class="mixerRow"><div class="mixerLabel"><strong>麦克风</strong><span>人声输入</span></div><div class="meter"><i id="micMeter"></i></div><label class="toggle"><input type="checkbox" id="micAudio" checked><i></i></label></div>
-              </div>
-              <label class="deviceSelect"><span>麦克风设备</span><select id="micDevice"><option value="">系统默认麦克风</option></select></label>
-            </section>
+            <div class="inspectorTabs" id="inspectorTabs">
+              <button class="inspectorTab active" data-ui-pane="audio"><svg><use href="#i-audio"/></svg><span>声音</span></button>
+              <button class="inspectorTab" data-ui-pane="camera"><svg><use href="#i-camera"/></svg><span>摄像头</span></button>
+              <button class="inspectorTab" data-ui-pane="quality"><svg><use href="#i-spark"/></svg><span>画质</span></button>
+              <button class="inspectorTab" data-ui-pane="overlay"><svg><use href="#i-name"/></svg><span>叠加</span></button>
+            </div>
 
-            <section class="controlSection cameraSection">
-              <div class="controlSectionHead"><div class="headingWithIcon"><svg><use href="#i-camera"/></svg><div><strong>摄像头画中画</strong><span>演示 / 课程 / 会议</span></div></div><label class="toggle"><input type="checkbox" id="cameraToggle"><i></i></label></div>
-              <div class="cameraCompact">
-                <label class="deviceSelect"><span>摄像头设备</span><select id="cameraDevice"><option value="">系统默认摄像头</option></select></label>
-                <div class="inlineFields cameraFields">
+            <div class="inspectorViewport">
+              <section class="toolPane active" data-ui-panel="audio">
+                <div class="paneHeader"><div><strong>声音</strong><span>分别控制系统声音和麦克风</span></div><span class="statusPill" id="audioStatus">待机</span></div>
+                <div class="mixerCard">
+                  <div class="mixerRow"><div class="mixerLabel"><strong>系统声音</strong><span>桌面与应用</span></div><div class="meter"><i id="systemMeter"></i></div><label class="toggle"><input type="checkbox" id="sysAudio" checked><i></i></label></div>
+                  <div class="mixerRow"><div class="mixerLabel"><strong>麦克风</strong><span>人声输入</span></div><div class="meter"><i id="micMeter"></i></div><label class="toggle"><input type="checkbox" id="micAudio" checked><i></i></label></div>
+                </div>
+                <label class="fieldFull"><span>麦克风设备</span><select id="micDevice"><option value="">系统默认麦克风</option></select></label>
+                <div class="paneNote"><svg><use href="#i-check"/></svg><span>录制时自动混合已开启的声音来源。</span></div>
+              </section>
+
+              <section class="toolPane" data-ui-panel="camera">
+                <div class="paneHeader"><div><strong>摄像头画中画</strong><span>适合课程、演示和会议</span></div><label class="toggle"><input type="checkbox" id="cameraToggle"><i></i></label></div>
+                <label class="fieldFull"><span>摄像头设备</span><select id="cameraDevice"><option value="">系统默认摄像头</option></select></label>
+                <div class="fieldGrid three">
                   <label><span>位置</span><select id="cameraCorner"><option value="br">右下</option><option value="bl">左下</option><option value="tr">右上</option><option value="tl">左上</option></select></label>
                   <label><span>形状</span><select id="cameraShape"><option value="rounded">圆角</option><option value="circle">圆形</option><option value="square">直角</option></select></label>
                   <label><span>大小</span><select id="cameraSize"><option value="20">小</option><option value="24">中</option><option value="30">大</option></select></label>
                 </div>
-              </div>
-            </section>
+                <div class="cameraGuide"><div></div><span>摄像头会叠加在录制画面上</span></div>
+              </section>
 
-            <section class="controlSection qualitySection">
-              <div class="controlSectionHead"><div class="headingWithIcon"><svg><use href="#i-spark"/></svg><div><strong>录制质量</strong><span>输出规格与时长</span></div></div><span class="statusPill" id="qualityLabel">1080P · 60</span></div>
-              <div class="fieldGrid">
-                <label><span>分辨率</span><select id="resolution"><option value="1920x1080">1080P</option><option value="2560x1440">2K</option><option value="3840x2160">4K</option><option value="1280x720">720P</option></select></label>
-                <label><span>帧率</span><select id="fps"><option value="60">60 FPS</option><option value="30">30 FPS</option><option value="120">120 FPS</option></select></label>
-                <label><span>视频码率</span><select id="bitrate"><option value="8000000">8 Mbps</option><option value="12000000">12 Mbps</option><option value="20000000">20 Mbps</option><option value="35000000">35 Mbps</option></select></label>
-                <label><span>开始倒计时</span><select id="countdown"><option value="3">3 秒</option><option value="0">关闭</option><option value="5">5 秒</option></select></label>
-                <label class="wide"><span>自动停止</span><select id="autoStop"><option value="0">关闭</option><option value="1800">30 分钟</option><option value="3600">60 分钟</option><option value="7200">120 分钟</option></select></label>
-              </div>
-            </section>
+              <section class="toolPane" data-ui-panel="quality">
+                <div class="paneHeader"><div><strong>录制质量</strong><span>调整清晰度、流畅度和时长</span></div><span class="statusPill" id="qualityLabel">1080P · 60</span></div>
+                <div class="fieldGrid two">
+                  <label><span>分辨率</span><select id="resolution"><option value="1920x1080">1080P</option><option value="2560x1440">2K</option><option value="3840x2160">4K</option><option value="1280x720">720P</option></select></label>
+                  <label><span>帧率</span><select id="fps"><option value="60">60 FPS</option><option value="30">30 FPS</option><option value="120">120 FPS</option></select></label>
+                  <label><span>视频码率</span><select id="bitrate"><option value="8000000">8 Mbps</option><option value="12000000">12 Mbps</option><option value="20000000">20 Mbps</option><option value="35000000">35 Mbps</option></select></label>
+                  <label><span>开始倒计时</span><select id="countdown"><option value="3">3 秒</option><option value="0">关闭</option><option value="5">5 秒</option></select></label>
+                </div>
+                <label class="fieldFull"><span>自动停止</span><select id="autoStop"><option value="0">关闭</option><option value="1800">30 分钟</option><option value="3600">60 分钟</option><option value="7200">120 分钟</option></select></label>
+              </section>
 
-            <section class="controlSection overlaySection">
-              <div class="controlSectionHead"><div class="headingWithIcon"><svg><use href="#i-name"/></svg><div><strong>水印与时间</strong><span>录制内容叠加</span></div></div><label class="toggle smallToggle"><input type="checkbox" id="timestampToggle"><i></i></label></div>
-              <div class="watermarkLine"><input id="watermarkText" maxlength="40" placeholder="可选：输入文字水印"><button class="textBtn" id="clearWatermark">清空</button></div>
-            </section>
+              <section class="toolPane" data-ui-panel="overlay">
+                <div class="paneHeader"><div><strong>画面叠加</strong><span>为录制内容添加必要信息</span></div></div>
+                <div class="settingSwitch"><div><strong>显示时间戳</strong><span>在画面中显示当前时间</span></div><label class="toggle"><input type="checkbox" id="timestampToggle"><i></i></label></div>
+                <label class="fieldFull"><span>文字水印</span><div class="inputAction"><input id="watermarkText" maxlength="40" placeholder="输入水印文字"/><button class="textBtn" id="clearWatermark">清空</button></div></label>
+                <div class="overlayPreview"><span>预览</span><div><i></i><strong>你的录制画面</strong><em>水印与时间会显示在这里</em></div></div>
+              </section>
+            </div>
           </aside>
         </div>
 
@@ -201,8 +204,8 @@
           </div>
           <div class="dockButtons">
             <button class="dockBtn" id="shotBtn"><svg><use href="#i-snap"/></svg><span>截图</span><kbd>F11</kbd></button>
-            <button class="dockBtn" id="pauseBtn" disabled><svg><use href="#i-pause"/></svg><span id="pauseLabel">暂停</span><kbd>F10</kbd></button>
             <button class="recordBtn" id="recordBtn"><i></i><span id="recordLabel">开始录制</span><kbd>F9</kbd></button>
+            <button class="dockBtn" disabled id="pauseBtn"><svg><use href="#i-pause"/></svg><span id="pauseLabel">暂停</span><kbd>F10</kbd></button>
           </div>
           <div class="dockRight"><svg><use href="#i-folder"/></svg><span id="savePathShort">保存至 视频\YingLu Screen</span><button class="textBtn" id="changeOutputBtn">更改</button></div>
         </section>
