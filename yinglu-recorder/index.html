@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>映录 Screen</title>
+<style>
+:root{--bg:#f3f6fb;--panel:#fff;--line:#e6ebf2;--text:#172033;--muted:#758196;--brand:#5b68ff;--brand2:#7c86ff;--danger:#f0445c;--ok:#20b486;--shadow:0 18px 50px rgba(23,32,51,.08)}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg);height:100vh;overflow:hidden}
+button,input,select{font:inherit}.app{display:grid;grid-template-columns:236px 1fr;height:100vh}.side{background:#eef2f8;border-right:1px solid var(--line);padding:24px 18px;display:flex;flex-direction:column}.brand{display:flex;gap:12px;align-items:center;padding:4px 10px 26px}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--brand),#9aa2ff);display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:0 8px 22px rgba(91,104,255,.22)}.brand b{font-size:18px}.brand span{display:block;color:var(--muted);font-size:12px;margin-top:2px}.nav{display:grid;gap:7px}.nav button{border:0;background:transparent;text-align:left;padding:12px 14px;border-radius:10px;color:#4d5870;cursor:pointer;font-weight:650}.nav button.active,.nav button:hover{background:#fff;color:var(--brand)}.foot{margin-top:auto;padding:14px 10px;color:var(--muted);font-size:12px}
+.main{min-width:0;display:flex;flex-direction:column}.top{height:66px;background:rgba(255,255,255,.88);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px}.top h1{font-size:18px;margin:0}.winbtns{display:flex;gap:8px}.winbtns button{width:36px;height:32px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer}.content{padding:24px;overflow:auto}.hero{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.hero h2{margin:0 0 6px;font-size:28px}.hero p{margin:0;color:var(--muted)}.btn{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer}.btn.primary{color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2))}.btn.secondary{background:#fff;border:1px solid var(--line);color:#38445d}.btn.danger{background:var(--danger);color:#fff}.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr);gap:18px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}.preview{padding:16px}.screen{position:relative;aspect-ratio:16/9;background:#151b28;border-radius:12px;overflow:hidden;display:grid;place-items:center}.screen video,.screen canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.empty{color:#aeb8c8;text-align:center}.empty .icon{font-size:52px;margin-bottom:10px}.empty b{display:block;color:#dce3ef;font-size:18px}.camera{position:absolute!important;left:auto!important;top:auto!important;right:18px!important;bottom:18px!important;width:25%!important;height:auto!important;aspect-ratio:16/10;object-fit:cover!important;border-radius:14px;border:3px solid #fff;box-shadow:0 10px 30px rgba(0,0,0,.28);z-index:4}.controlbar{display:flex;align-items:center;justify-content:space-between;padding-top:14px}.timer{display:flex;gap:10px;align-items:center;font-variant-numeric:tabular-nums;font-weight:800}.dot{width:10px;height:10px;border-radius:50%;background:#bbc3d1}.dot.live{background:var(--danger);box-shadow:0 0 0 5px rgba(240,68,92,.12)}.right{display:grid;gap:18px}.panel{padding:18px}.panel h3{margin:0 0 14px;font-size:16px}.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.mode{padding:12px 8px;border:1px solid var(--line);background:#f9fbfe;border-radius:10px;text-align:center;cursor:pointer;color:#536078}.mode.active{border-color:#aab1ff;background:#f0f1ff;color:var(--brand);font-weight:800}.row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f3f7}.row:last-child{border-bottom:0}.switch{position:relative;width:44px;height:24px}.switch input{display:none}.switch i{position:absolute;inset:0;background:#d8deea;border-radius:99px;cursor:pointer}.switch i:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;border-radius:50%;background:#fff;transition:.2s}.switch input:checked+i{background:var(--brand)}.switch input:checked+i:before{transform:translateX(20px)}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}.field select,.field input{width:100%;border:1px solid var(--line);background:#fbfcfe;border-radius:9px;padding:10px}.recordline{display:flex;gap:10px}.recordline .btn{flex:1}.status{margin-top:12px;background:#f7f9fc;border-radius:10px;padding:10px 12px;color:var(--muted);font-size:13px}.hidden{display:none!important}
+.modal{position:fixed;inset:0;background:rgba(12,18,30,.42);display:grid;place-items:center;padding:24px;z-index:30}.modalbox{width:min(980px,94vw);max-height:82vh;background:#fff;border-radius:18px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.25)}.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modalhead h3{margin:0}.sources{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;overflow:auto;max-height:62vh}.source{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;cursor:pointer;text-align:left;padding:0}.source:hover{border-color:#aab1ff;box-shadow:0 8px 24px rgba(91,104,255,.12)}.source img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#edf1f6}.source b{display:block;padding:10px 11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.toast{position:fixed;right:22px;bottom:22px;background:#172033;color:#fff;padding:12px 15px;border-radius:11px;box-shadow:var(--shadow);z-index:50;max-width:420px}.small{font-size:12px;color:var(--muted)}@media(max-width:1050px){.app{grid-template-columns:190px 1fr}.grid{grid-template-columns:1fr}.right{grid-template-columns:1fr 1fr}.sources{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo">映</div><div><b>映录 Screen</b><span>PRO RECORDER</span></div></div>
+    <div class="nav"><button class="active">● 录制中心</button><button id="openOutput">▣ 素材文件夹</button><button id="chooseOutput">⌁ 保存位置</button></div>
+    <div class="foot">Windows 10 / 11 · 64-bit<br>本地录制，不自动上传</div>
+  </aside>
+  <section class="main">
+    <header class="top"><h1>专业录屏工作台</h1><div class="winbtns"><button id="minBtn">—</button><button id="maxBtn">□</button><button id="closeBtn">×</button></div></header>
+    <main class="content">
+      <div class="hero"><div><h2>开始一次高质量录制</h2><p>屏幕、窗口、系统声音、麦克风与摄像头画中画。</p></div><button class="btn secondary" id="sourceBtn">选择录制来源</button></div>
+      <div class="grid">
+        <section class="card preview">
+          <div class="screen" id="screen">
+            <div class="empty" id="empty"><div class="icon">▣</div><b>尚未选择录制来源</b><span>点击“选择录制来源”读取屏幕和窗口</span></div>
+            <video id="preview" autoplay muted playsinline class="hidden"></video>
+            <video id="camPreview" autoplay muted playsinline class="camera hidden"></video>
+          </div>
+          <div class="controlbar"><div class="timer"><i id="liveDot" class="dot"></i><span id="timer">00:00:00</span></div><div class="small" id="selectedName">未选择来源</div></div>
+        </section>
+        <aside class="right">
+          <section class="card panel">
+            <h3>录制模式</h3>
+            <div class="modes" id="modes"><button class="mode active" data-mode="screen">全屏</button><button class="mode" data-mode="window">窗口</button><button class="mode" data-mode="region">区域</button><button class="mode" data-mode="audio">音频</button><button class="mode" data-mode="device">设备</button><button class="mode" data-mode="gif">GIF</button></div>
+          </section>
+          <section class="card panel">
+            <h3>音视频来源</h3>
+            <div class="row"><span>系统声音</span><label class="switch"><input type="checkbox" id="sysAudio" checked><i></i></label></div>
+            <div class="row"><span>麦克风</span><label class="switch"><input type="checkbox" id="micAudio" checked><i></i></label></div>
+            <div class="row"><span>摄像头画中画</span><label class="switch"><input type="checkbox" id="camera"><i></i></label></div>
+          </section>
+          <section class="card panel">
+            <h3>画质</h3>
+            <div class="fields">
+              <div class="field"><label>分辨率</label><select id="resolution"><option value="1920x1080">1080P</option><option value="2560x1440">2K</option><option value="3840x2160">4K</option><option value="1280x720">720P</option></select></div>
+              <div class="field"><label>帧率</label><select id="fps"><option>60</option><option>30</option><option>120</option></select></div>
+              <div class="field"><label>视频码率</label><select id="bitrate"><option value="12000000">12 Mbps</option><option value="20000000">20 Mbps</option><option value="35000000">35 Mbps</option></select></div>
+              <div class="field"><label>倒计时</label><select id="countdown"><option value="3">3 秒</option><option value="0">关闭</option><option value="5">5 秒</option></select></div>
+            </div>
+          </section>
+          <section class="card panel">
+            <div class="recordline"><button class="btn primary" id="recordBtn">● 开始录制</button><button class="btn secondary" id="shotBtn">截图</button></div>
+            <div class="status" id="status">就绪 · 请选择屏幕或窗口</div>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </section>
+</div>
+
+<div class="modal hidden" id="sourceModal">
+  <div class="modalbox">
+    <div class="modalhead"><div><h3>选择录制来源</h3><div class="small">选择整个显示器或单独窗口</div></div><button class="btn secondary" id="closeModal">关闭</button></div>
+    <div class="sources" id="sources"></div>
+  </div>
+</div>
+<div class="toast hidden" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+let selected=null, displayStream=null, micStream=null, camStream=null, recorder=null, chunks=[], startedAt=0, timerId=0, recording=false, mode='screen';
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),2600)}
+function timeFmt(ms){const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60),x=s%60;return [h,m,x].map(v=>String(v).padStart(2,'0')).join(':')}
+function stopTracks(s){s?.getTracks().forEach(t=>t.stop())}
+function stamp(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds())}
+function mime(){for(const m of ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'])if(MediaRecorder.isTypeSupported(m))return m;return ''}
+function audioMime(){for(const m of ['audio/webm;codecs=opus','audio/webm'])if(MediaRecorder.isTypeSupported(m))return m;return ''}
+
+async function loadSources(){
+  const box=$('#sources');box.innerHTML='<div class="small">正在读取屏幕和窗口…</div>';
+  const arr=await window.yinglu.listSources();
+  box.innerHTML='';
+  arr.filter(x=>mode==='window'?x.type==='window':true).forEach(x=>{
+    const b=document.createElement('button');b.className='source';
+    b.innerHTML='<img src="'+x.thumbnail+'"><b>'+escapeHtml(x.name)+'</b>';
+    b.onclick=()=>{selected=x;$('#selectedName').textContent=x.name;$('#status').textContent='已选择：'+x.name;$('#sourceModal').classList.add('hidden');toast('已选择录制来源');};
+    box.appendChild(b);
+  });
+}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+async function getCamera(){
+  stopTracks(camStream);camStream=null;$('#camPreview').classList.add('hidden');
+  if(!$('#camera').checked && mode!=='device') return;
+  camStream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1920},height:{ideal:1080},frameRate:{ideal:30}},audio:false});
+  $('#camPreview').srcObject=camStream;$('#camPreview').classList.remove('hidden');
+}
+
+async function prepare(){
+  if(mode==='device'){
+    await getCamera();
+    if(!camStream) throw new Error('摄像头不可用');
+    return {video:camStream,audio:null};
+  }
+  if(!selected) throw new Error('请先选择录制来源');
+  await window.yinglu.chooseSource(selected.id,$('#sysAudio').checked);
+  displayStream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:{ideal:+$('#fps').value}},audio:$('#sysAudio').checked});
+  $('#preview').srcObject=displayStream;$('#preview').classList.remove('hidden');$('#empty').classList.add('hidden');
+  if($('#camera').checked) await getCamera();
+  let mic=null;
+  if($('#micAudio').checked){
+    try{micStream=await navigator.mediaDevices.getUserMedia({audio:{noiseSuppression:true,echoCancellation:false,autoGainControl:false},video:false});mic=micStream}catch(e){toast('麦克风不可用，继续录制')}
+  }
+  return {video:displayStream,audio:mic};
+}
+
+async function compose(base){
+  const audioCtx=new AudioContext();
+  const dest=audioCtx.createMediaStreamDestination();
+  if(base.video?.getAudioTracks().length) audioCtx.createMediaStreamSource(new MediaStream(base.video.getAudioTracks())).connect(dest);
+  if(base.audio?.getAudioTracks().length) audioCtx.createMediaStreamSource(base.audio).connect(dest);
+  const out=new MediaStream();
+  const v=mode==='device'?camStream?.getVideoTracks()[0]:displayStream?.getVideoTracks()[0];
+  if(v) out.addTrack(v);
+  dest.stream.getAudioTracks().forEach(t=>out.addTrack(t));
+  out._audioCtx=audioCtx;
+  return out;
+}
+
+async function start(){
+  const cd=+$('#countdown').value;
+  for(let i=cd;i>0;i--){$('#status').textContent=i+' 秒后开始录制';await new Promise(r=>setTimeout(r,1000))}
+  const base=await prepare();
+  const stream=await compose(base);
+  const onlyAudio=mode==='audio';
+  const type=onlyAudio?audioMime():mime();
+  recorder=new MediaRecorder(stream,{mimeType:type,videoBitsPerSecond:+$('#bitrate').value,audioBitsPerSecond:192000});
+  chunks=[];
+  recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+  recorder.onstop=async()=>{
+    const blob=new Blob(chunks,{type});
+    const buf=await blob.arrayBuffer();
+    const ext=onlyAudio?'webm':'webm';
+    const file=await window.yinglu.saveRecording('映录_'+stamp()+'.'+ext,buf);
+    toast('录制已保存：'+file);
+    cleanup();
+  };
+  recorder.start(1000);
+  recording=true;startedAt=Date.now();
+  $('#recordBtn').textContent='■ 停止录制';$('#recordBtn').classList.remove('primary');$('#recordBtn').classList.add('danger');
+  $('#liveDot').classList.add('live');$('#status').textContent='正在录制';
+  timerId=setInterval(()=>$('#timer').textContent=timeFmt(Date.now()-startedAt),250);
+  displayStream?.getVideoTracks()[0]?.addEventListener('ended',()=>{if(recording)stop()},{once:true});
+}
+function stop(){if(recorder&&recorder.state!=='inactive')recorder.stop()}
+function cleanup(){
+  recording=false;clearInterval(timerId);$('#timer').textContent='00:00:00';$('#liveDot').classList.remove('live');
+  $('#recordBtn').textContent='● 开始录制';$('#recordBtn').classList.add('primary');$('#recordBtn').classList.remove('danger');$('#status').textContent='录制完成';
+  stopTracks(displayStream);stopTracks(micStream);stopTracks(camStream);displayStream=micStream=camStream=null;
+  $('#preview').srcObject=null;$('#preview').classList.add('hidden');$('#camPreview').srcObject=null;$('#camPreview').classList.add('hidden');$('#empty').classList.remove('hidden');
+}
+async function screenshot(){
+  if(!displayStream){toast('请先开始预览或录制');return}
+  const v=$('#preview'),c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);const p=await window.yinglu.saveScreenshot('截图_'+stamp()+'.png',c.toDataURL('image/png'));toast('截图已保存：'+p);
+}
+
+$('#sourceBtn').onclick=async()=>{$('#sourceModal').classList.remove('hidden');await loadSources()};
+$('#closeModal').onclick=()=>$('#sourceModal').classList.add('hidden');
+$('#recordBtn').onclick=async()=>{try{recording?stop():await start()}catch(e){toast(e.message||String(e));cleanup()}};
+$('#shotBtn').onclick=screenshot;
+$('#openOutput').onclick=()=>window.yinglu.openFolder();
+$('#chooseOutput').onclick=async()=>{const r=await window.yinglu.chooseOutput();if(r)toast('保存位置已更新')};
+$('#minBtn').onclick=()=>window.yinglu.minimize();$('#maxBtn').onclick=()=>window.yinglu.maximize();$('#closeBtn').onclick=()=>window.yinglu.close();
+$('#modes').onclick=e=>{const b=e.target.closest('.mode');if(!b)return;mode=b.dataset.mode;document.querySelectorAll('.mode').forEach(x=>x.classList.toggle('active',x===b));$('#status').textContent='已切换：'+b.textContent;if(mode==='window')selected=null;if(mode==='device')$('#camera').checked=true};
+window.addEventListener('beforeunload',cleanup);
+</script>
+</body>
+</html>
