@@ -125,7 +125,7 @@ function showPostRecord(path,size){
 function setPage(page){
   $$('.page').forEach(x => x.classList.toggle('active', x.id===`page-${page}`));
   $$('.navItem').forEach(x => x.classList.toggle('active', x.dataset.page===page));
-  const map={recorder:['录制工作台','简单设置，立即开始高质量录制'],library:['录制库','集中管理本地录制文件与截图'],settings:['偏好设置','外观、保存、命名与快捷操作']};
+  const map={recorder:['屏幕录制','选择来源，开始高质量录制'],library:['录制库','管理本地录制文件与截图'],settings:['设置','外观、保存、命名与快捷操作']};
   $('#pageTitle').textContent=map[page][0]; $('#pageSubtitle').textContent=map[page][1];
   if(page==='library') loadLibrary();
 }
@@ -482,3 +482,20 @@ window.yinglu.onHotkey(async event=>{try{if(event==='record-toggle')recording?st
 window.addEventListener('beforeunload',()=>{stopRenderLoop();stopMeters();stopTracks(displayStream);stopTracks(micStream);stopTracks(cameraStream);audioContext?.close().catch(()=>{});window.yinglu.recordingGuard({enabled:false}).catch(()=>{});});
 
 init();
+
+/* v1.7.0 hand-designed inspector navigation */
+function setInspectorPane(name){
+  $$('#inspectorTabs .inspectorTab').forEach(btn=>btn.classList.toggle('active',btn.dataset.uiPane===name));
+  $$('.toolPane[data-ui-panel]').forEach(pane=>pane.classList.toggle('active',pane.dataset.uiPanel===name));
+}
+$('#inspectorTabs')?.addEventListener('click',e=>{
+  const btn=e.target.closest('.inspectorTab');
+  if(btn) setInspectorPane(btn.dataset.uiPane);
+});
+$('#modeTabs')?.addEventListener('click',e=>{
+  const btn=e.target.closest('.modeTab');
+  if(!btn)return;
+  if(btn.dataset.mode==='device') setInspectorPane('camera');
+  else if(btn.dataset.mode==='audio') setInspectorPane('audio');
+  else setInspectorPane('quality');
+});
