@@ -499,3 +499,144 @@ $('#modeTabs')?.addEventListener('click',e=>{
   else if(btn.dataset.mode==='audio') setInspectorPane('audio');
   else setInspectorPane('quality');
 });
+
+
+/* v1.8.0 exact user-reference UI skin */
+function initPixelV18(){
+  const root=document.getElementById('pixelUI');
+  if(!root)return;
+  document.body.classList.add('pixel-skin-active');
+
+  const fire=(el,type='click')=>{
+    if(!el)return;
+    if(type==='click') el.click();
+    else el.dispatchEvent(new Event(type,{bubbles:true}));
+  };
+
+  root.querySelectorAll('[data-nav]').forEach(btn=>btn.addEventListener('click',()=>{
+    const page=btn.dataset.nav;
+    const target=document.querySelector(`#navList .navItem[data-page="${page}"]`);
+    fire(target);
+    document.body.classList.toggle('pixel-skin-active',page==='recorder');
+  }));
+
+  root.querySelectorAll('[data-mode-target]').forEach(btn=>btn.addEventListener('click',()=>{
+    const target=document.querySelector(`#modeTabs .modeTab[data-mode="${btn.dataset.modeTarget}"]`);
+    fire(target);
+  }));
+
+  const actionMap={
+    'source':'selectSourceBtn',
+    'last-source':'lastSourceBtn',
+    'save-location':'openOutputTop',
+    'shot':'shotBtn',
+    'pause':'pauseBtn',
+    'record':'recordBtn',
+    'pin':'pinBtn',
+    'min':'minBtn',
+    'max':'maxBtn',
+    'close':'closeBtn',
+    'clear-watermark':'clearWatermark'
+  };
+  root.querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>{
+    fire(document.getElementById(actionMap[btn.dataset.action]));
+  }));
+
+  root.querySelectorAll('[data-toggle-target]').forEach(btn=>btn.addEventListener('click',()=>{
+    const target=document.getElementById(btn.dataset.toggleTarget);
+    if(!target)return;
+    target.checked=!target.checked;
+    fire(target,'change');
+  }));
+
+  root.querySelectorAll('[data-mirror-select]').forEach(mirror=>{
+    const syncOptions=()=>{
+      const target=document.getElementById(mirror.dataset.mirrorSelect);
+      if(!target)return;
+      if(target.options.length!==mirror.options.length ||
+         [...target.options].some((o,i)=>!mirror.options[i] || mirror.options[i].value!==o.value || mirror.options[i].text!==o.text)){
+        const value=target.value;
+        mirror.innerHTML=[...target.options].map(o=>`<option value="${escapeHtml(o.value)}">${escapeHtml(o.text)}</option>`).join('');
+        mirror.value=value;
+      }else mirror.value=target.value;
+    };
+    syncOptions();
+    mirror.addEventListener('pointerdown',syncOptions);
+    mirror.addEventListener('focus',syncOptions);
+    mirror.addEventListener('change',()=>{
+      const target=document.getElementById(mirror.dataset.mirrorSelect);
+      if(!target)return;
+      target.value=mirror.value;
+      fire(target,'change');
+    });
+    mirror._pixelSync=syncOptions;
+  });
+
+  root.querySelectorAll('[data-mirror-input]').forEach(mirror=>{
+    const target=document.getElementById(mirror.dataset.mirrorInput);
+    if(target)mirror.value=target.value;
+    mirror.addEventListener('input',()=>{
+      const t=document.getElementById(mirror.dataset.mirrorInput);
+      if(!t)return;
+      t.value=mirror.value;
+      fire(t,'input');
+    });
+    mirror.addEventListener('change',()=>{
+      const t=document.getElementById(mirror.dataset.mirrorInput);
+      if(t)fire(t,'change');
+    });
+  });
+
+  const pVideo=document.getElementById('pixelPreviewVideo');
+  const pCam=document.getElementById('pixelCameraVideo');
+  const pTimer=document.getElementById('pixelTimer');
+  const pRecordLabel=document.getElementById('pixelRecordLabel');
+  const pSourceStatus=document.getElementById('pixelSourceStatus');
+
+  function syncPixelState(){
+    root.querySelectorAll('[data-mirror-select]').forEach(x=>x._pixelSync?.());
+
+    if(pVideo && preview){
+      const next=preview.srcObject||null;
+      if(pVideo.srcObject!==next)pVideo.srcObject=next;
+      pVideo.classList.toggle('live',!!next);
+      if(next && pVideo.paused)pVideo.play().catch(()=>{});
+    }
+
+    if(pCam && cameraVideo){
+      const next=cameraVideo.srcObject||null;
+      if(pCam.srcObject!==next)pCam.srcObject=next;
+      const enabled=!!next && !cameraVideo.classList.contains('hidden');
+      pCam.className='pixelCameraVideo'+(enabled?' live':'');
+      if(enabled){
+        const corner=document.getElementById('cameraCorner')?.value||'br';
+        const shape=document.getElementById('cameraShape')?.value||'rounded';
+        const size=+(document.getElementById('cameraSize')?.value||24);
+        pCam.classList.add(corner,shape);
+        pCam.style.width=`${Math.max(9,Math.min(18,size*.48))}%`;
+        if(shape!=='circle')pCam.style.aspectRatio='16 / 9';
+        else pCam.style.aspectRatio='1 / 1';
+        if(pCam.paused)pCam.play().catch(()=>{});
+      }
+    }
+
+    const isRecording=document.getElementById('recordBtn')?.classList.contains('stop');
+    if(pTimer){
+      pTimer.textContent=document.getElementById('timer')?.textContent||'00:00:00';
+      pTimer.classList.toggle('active',!!isRecording);
+    }
+    if(pRecordLabel){
+      pRecordLabel.textContent=document.getElementById('recordLabel')?.textContent||'开始录制';
+      pRecordLabel.classList.toggle('active',!!isRecording);
+    }
+    if(pSourceStatus){
+      const name=document.getElementById('selectedSourceLabel')?.textContent||'';
+      const hasSource=!!preview?.srcObject;
+      pSourceStatus.textContent=hasSource?name:'';
+      pSourceStatus.classList.toggle('active',hasSource && !!name);
+    }
+  }
+  syncPixelState();
+  setInterval(syncPixelState,250);
+}
+setTimeout(initPixelV18,60);
