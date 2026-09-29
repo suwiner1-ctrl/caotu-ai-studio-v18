@@ -75,7 +75,6 @@ function createWindow(){
     minWidth: 1180,
     minHeight: 760,
     title: '映录 Screen',
-    icon: path.join(__dirname, 'assets', 'icon.ico'),
     backgroundColor: '#F4F6FA',
     frame: false,
     show: false,
