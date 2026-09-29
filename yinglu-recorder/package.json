@@ -19,14 +19,31 @@
     "productName": "映录 Screen",
     "executableName": "YingLuScreen",
     "asar": true,
-    "directories": {"output":"dist"},
-    "files": ["main.js","preload.js","index.html","styles.css","renderer.js","assets/icon.ico"],
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "styles.css",
+      "renderer.js"
+    ],
     "win": {
       "target": [
-        {"target":"nsis","arch":["x64"]},
-        {"target":"portable","arch":["x64"]}
-      ],
-      "icon": "assets/icon.ico"
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
     },
     "nsis": {
       "artifactName": "YingLuScreen-Setup-${version}.${ext}",
