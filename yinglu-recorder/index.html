@@ -45,6 +45,65 @@
   <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 7 5 5-5 5"/></symbol>
 </svg>
 
+<div id="pixelUI" class="pixelUI" aria-label="映录 Screen 设计界面">
+  <div class="pixelFrame">
+    <img class="pixelArtwork" src="assets/ui-v18.webp" alt=""/>
+    <video id="pixelPreviewVideo" class="pixelPreviewVideo" autoplay muted playsinline></video>
+    <video id="pixelCameraVideo" class="pixelCameraVideo" autoplay muted playsinline></video>
+    <div id="pixelRegionBox" class="pixelRegionBox"></div>
+
+    <button class="pixelHotspot navRecord" data-nav="recorder" aria-label="录制工作台"></button>
+    <button class="pixelHotspot navLibrary" data-nav="library" aria-label="录制库"></button>
+    <button class="pixelHotspot navSettings" data-nav="settings" aria-label="偏好设置"></button>
+
+    <button class="pixelHotspot modeFull" data-mode-target="screen" aria-label="全屏录制"></button>
+    <button class="pixelHotspot modeWindow" data-mode-target="window" aria-label="窗口录制"></button>
+    <button class="pixelHotspot modeRegion" data-mode-target="region" aria-label="区域录制"></button>
+    <button class="pixelHotspot modeCamera" data-mode-target="device" aria-label="摄像头录制"></button>
+    <button class="pixelHotspot modeAudio" data-mode-target="audio" aria-label="音频录制"></button>
+
+    <button class="pixelHotspot chooseSourceMain" data-action="source" aria-label="选择录制来源"></button>
+    <button class="pixelHotspot chooseSourceTop" data-action="source" aria-label="选择来源"></button>
+    <button class="pixelHotspot lastSourceTop" data-action="last-source" aria-label="上次来源"></button>
+    <button class="pixelHotspot saveLocation" data-action="save-location" aria-label="保存目录"></button>
+    <button class="pixelHotspot shotHotspot" data-action="shot" aria-label="截图"></button>
+    <button class="pixelHotspot pauseHotspot" data-action="pause" aria-label="暂停"></button>
+    <button class="pixelHotspot recordHotspot" data-action="record" aria-label="开始录制"></button>
+    <button class="pixelHotspot pinHotspot" data-action="pin" aria-label="置顶"></button>
+    <button class="pixelHotspot minHotspot" data-action="min" aria-label="最小化"></button>
+    <button class="pixelHotspot maxHotspot" data-action="max" aria-label="最大化"></button>
+    <button class="pixelHotspot closeHotspot" data-action="close" aria-label="关闭"></button>
+
+    <button class="pixelHotspot sysToggle" data-toggle-target="sysAudio" aria-label="系统声音"></button>
+    <button class="pixelHotspot micToggle" data-toggle-target="micAudio" aria-label="麦克风"></button>
+    <button class="pixelHotspot camToggle" data-toggle-target="cameraToggle" aria-label="摄像头画中画"></button>
+    <button class="pixelHotspot timeToggle" data-toggle-target="timestampToggle" aria-label="时间戳"></button>
+    <button class="pixelHotspot clearWatermarkHotspot" data-action="clear-watermark" aria-label="清空水印"></button>
+
+    <select class="pixelSelect usePresetMirror" data-mirror-select="usePreset" aria-label="用途预设">
+      <option value="custom">自定义</option><option value="presentation">演示讲解</option><option value="course">课程录制</option><option value="meeting">会议录制</option><option value="game">游戏录制</option>
+    </select>
+    <select class="pixelSelect qualityPresetMirror" data-mirror-select="qualityPreset" aria-label="画质预设">
+      <option value="balanced">1080P · 60</option><option value="smooth">1080P · 30</option><option value="sharp">2K · 60</option><option value="ultra">4K · 60</option>
+    </select>
+    <select class="pixelSelect micDeviceMirror" data-mirror-select="micDevice" aria-label="麦克风设备"></select>
+    <select class="pixelSelect cameraDeviceMirror" data-mirror-select="cameraDevice" aria-label="摄像头设备"></select>
+    <select class="pixelSelect cameraCornerMirror" data-mirror-select="cameraCorner"><option value="br">右下</option><option value="bl">左下</option><option value="tr">右上</option><option value="tl">左上</option></select>
+    <select class="pixelSelect cameraShapeMirror" data-mirror-select="cameraShape"><option value="rounded">圆角</option><option value="circle">圆形</option><option value="square">直角</option></select>
+    <select class="pixelSelect cameraSizeMirror" data-mirror-select="cameraSize"><option value="20">小</option><option value="24">中</option><option value="30">大</option></select>
+    <select class="pixelSelect resolutionMirror" data-mirror-select="resolution"><option value="1920x1080">1080P</option><option value="2560x1440">2K</option><option value="3840x2160">4K</option><option value="1280x720">720P</option></select>
+    <select class="pixelSelect fpsMirror" data-mirror-select="fps"><option value="60">60 FPS</option><option value="30">30 FPS</option><option value="120">120 FPS</option></select>
+    <select class="pixelSelect bitrateMirror" data-mirror-select="bitrate"><option value="8000000">8 Mbps</option><option value="12000000">12 Mbps</option><option value="20000000">20 Mbps</option><option value="35000000">35 Mbps</option></select>
+    <select class="pixelSelect countdownMirror" data-mirror-select="countdown"><option value="3">3 秒</option><option value="0">关闭</option><option value="5">5 秒</option></select>
+    <select class="pixelSelect autoStopMirror" data-mirror-select="autoStop"><option value="0">关闭</option><option value="1800">30 分钟</option><option value="3600">60 分钟</option><option value="7200">120 分钟</option></select>
+    <input class="pixelInput watermarkMirror" data-mirror-input="watermarkText" maxlength="40" aria-label="文字水印"/>
+
+    <div class="pixelDynamic pixelTimer" id="pixelTimer">00:00:00</div>
+    <div class="pixelDynamic pixelRecordLabel" id="pixelRecordLabel">开始录制</div>
+    <div class="pixelDynamic pixelSourceStatus" id="pixelSourceStatus"></div>
+  </div>
+</div>
+
 <div class="shell">
   <aside class="sidebar">
     <div class="brandBlock">
