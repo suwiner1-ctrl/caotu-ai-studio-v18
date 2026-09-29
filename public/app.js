@@ -27,7 +27,7 @@ const nodeIcon=t=>t.includes('文本')?'T':t.includes('AI')?'✦':t.includes('�
 return shell(`<div class="page wf-page">
 <header class="wf-master-top">
   <div class="wf-title"><div class="wf-title-icon">⌘</div><div><h2>品牌主视觉生产线</h2><p>已自动保存 · ${nodes.length} 节点 · 5 连线</p></div></div>
-  <div class="wf-center-tools"><button class="wf-tool" data-wf-action="undo">↶</button><button class="wf-tool" data-wf-action="redo">↷</button><button class="wf-tool" data-wf-action="zoom-out">−</button><button class="wf-tool" data-wf-action="fit">适应画布</button><button class="wf-tool" id="wf-zoom-label">100%</button><button class="wf-tool" data-wf-action="zoom-in">＋</button></div>
+  <div class="wf-center-tools"><button class="wf-tool" data-wf-action="undo">↶</button><button class="wf-tool" data-wf-action="redo">↷</button><button class="wf-tool" data-wf-action="zoom-out">−</button><button class="wf-tool" data-wf-action="fit">适应画布</button><button class="wf-tool" id="wf-zoom-label">${Math.round(state.workflowZoom*100)}%</button><button class="wf-tool" data-wf-action="zoom-in">＋</button></div>
   <div class="wf-actions"><button class="btn-soft" data-wf-action="library">节点库</button><button class="btn-soft" data-wf-action="template">模板</button><button class="btn-soft" data-wf-action="validate">校验</button><button class="btn-soft" data-wf-action="auto-layout">自动布局</button><button class="btn-soft" data-wf-action="save">保存</button><button class="btn btn-primary" data-action="run-workflow">▶ 运行工作流</button></div>
 </header>
 <div class="wf-master">
@@ -71,7 +71,7 @@ return shell(`<div class="page wf-page">
     <div class="field"><label>风格模型</label><select><option>2.5D 动漫风格</option></select></div>
     <div class="field"><label>图像强度</label><input type="range" value="70"></div>
     <div class="field"><label>输出分辨率</label><select><option>2048 × 1152 (2K)</option></select></div>
-    <div class="wf-ins-bottom"><button class="btn-soft">重置</button><button class="btn btn-primary">应用</button></div>
+    <div class="wf-ins-bottom"><button class="btn-soft" data-wf-action="disconnect">断开连线</button><button class="btn btn-primary" data-wf-action="save">保存</button></div>
   </aside>
 </div></div>`)
 }
@@ -115,5 +115,108 @@ if(a.dataset.action==="run-workflow"){await api("/api/workflows/run",{method:"PO
 if(a.dataset.action==="agent-send"){const text=$("#agent-msg").value.trim();if(!text)return;state.agentMsgs.push({role:"user",text});const d=await api("/api/agent",{method:"POST",body:JSON.stringify({message:text})});state.agentMsgs.push({role:"ai",text:d.reply});render()}
 }catch(err){toast(err.message)}
 });
+
+let wfDrag=null;
+document.addEventListener("pointerdown",e=>{
+  const port=e.target.closest(".wf-port");
+  if(port){
+    const id=port.dataset.nodeId,kind=port.dataset.port;
+    if(kind==="out"){
+      state.connectFrom=id;
+      port.classList.add("connecting");
+      toast("请选择目标节点的输入端口");
+    }else if(kind==="in"&&state.connectFrom&&state.connectFrom!==id){
+      const edge=[state.connectFrom,id];
+      if(!state.edges.some(x=>x[0]===edge[0]&&x[1]===edge[1])) state.edges.push(edge);
+      state.connectFrom=null;
+      render();
+      toast("节点已连接");
+    }
+    e.preventDefault();
+    return;
+  }
+  const node=e.target.closest(".wf-node");
+  if(node&&!e.target.closest("button,input,select,textarea")){
+    const id=node.dataset.nodeId,n=state.nodes.find(x=>x.id===id);
+    if(!n)return;
+    state.selectedNode=id;
+    wfDrag={id,node,startX:e.clientX,startY:e.clientY,baseX:n.x,baseY:n.y};
+    node.classList.add("dragging");
+    try{node.setPointerCapture(e.pointerId)}catch{}
+    e.preventDefault();
+  }
+});
+document.addEventListener("pointermove",e=>{
+  if(!wfDrag)return;
+  const n=state.nodes.find(x=>x.id===wfDrag.id);
+  if(!n)return;
+  const z=state.workflowZoom||1;
+  n.x=Math.max(8,wfDrag.baseX+(e.clientX-wfDrag.startX)/z);
+  n.y=Math.max(8,wfDrag.baseY+(e.clientY-wfDrag.startY)/z);
+  wfDrag.node.style.left=n.x+"px";
+  wfDrag.node.style.top=n.y+"px";
+});
+document.addEventListener("pointerup",()=>{
+  if(!wfDrag)return;
+  wfDrag.node.classList.remove("dragging");
+  wfDrag=null;
+  render();
+});
+document.addEventListener("click",e=>{
+  const node=e.target.closest(".wf-node");
+  if(node&&!e.target.closest(".wf-port")&&!e.target.closest("button,input,select,textarea")){
+    state.selectedNode=node.dataset.nodeId;
+    document.querySelectorAll(".wf-node").forEach(x=>x.classList.toggle("selected",x.dataset.nodeId===state.selectedNode));
+  }
+  const b=e.target.closest("[data-wf-action]");
+  if(!b)return;
+  const a=b.dataset.wfAction;
+  if(a==="zoom-in"||a==="zoom-out"||a==="fit"){
+    if(a==="zoom-in") state.workflowZoom=Math.min(1.5,(state.workflowZoom||1)+.1);
+    if(a==="zoom-out") state.workflowZoom=Math.max(.6,(state.workflowZoom||1)-.1);
+    if(a==="fit") state.workflowZoom=.9;
+    const canvas=document.querySelector("#wf-canvas");
+    if(canvas) canvas.style.zoom=String(state.workflowZoom);
+    const label=document.querySelector("#wf-zoom-label");
+    if(label) label.textContent=Math.round(state.workflowZoom*100)+"%";
+    toast("画布缩放 "+Math.round(state.workflowZoom*100)+"%");
+  }
+  if(a==="auto-layout"){
+    const p=[[100,110],[390,170],[700,90],[700,360],[1010,220]];
+    state.nodes.forEach((n,i)=>{const q=p[i]||[120+(i%4)*250,120+Math.floor(i/4)*180];n.x=q[0];n.y=q[1]});
+    render(); toast("节点已自动整理");
+  }
+  if(a==="validate"){
+    const ids=new Set(state.nodes.map(n=>n.id));
+    const bad=state.edges.some(([x,y])=>!ids.has(x)||!ids.has(y)||x===y);
+    toast(bad?"校验发现无效连线":"校验通过：节点与连线正常");
+  }
+  if(a==="save"){
+    localStorage.setItem("caotu-workflow-v19",JSON.stringify({nodes:state.nodes,edges:state.edges,zoom:state.workflowZoom}));
+    toast("工作流已保存");
+  }
+  if(a==="disconnect"&&state.selectedNode){
+    const id=state.selectedNode;
+    const before=state.edges.length;
+    state.edges=state.edges.filter(([x,y])=>x!==id&&y!==id);
+    render();
+    toast(before===state.edges.length?"当前节点没有连线":"已断开所选节点连线");
+  }
+  if(a==="template") toast("模板功能已保留，可继续增加模板分类");
+  if(a==="library") toast("节点库已显示在左侧");
+  if(a==="undo"||a==="redo") toast("撤销 / 重做历史接口已保留");
+});
+document.addEventListener("keydown",e=>{
+  if(state.page!=="/workflow")return;
+  if((e.key==="Delete"||e.key==="Backspace")&&state.selectedNode&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||"")){
+    const id=state.selectedNode;
+    state.nodes=state.nodes.filter(n=>n.id!==id);
+    state.edges=state.edges.filter(([x,y])=>x!==id&&y!==id);
+    state.selectedNode=state.nodes[0]?.id||null;
+    render();
+    toast("节点已删除");
+  }
+});
+
 window.addEventListener("popstate",render);
-(async()=>{try{state.boot=await api("/api/boot");const me=await api("/api/me");state.user=me.user}catch{}render()})();
+(async()=>{try{const saved=localStorage.getItem("caotu-workflow-v19");if(saved){const w=JSON.parse(saved);if(Array.isArray(w.nodes))state.nodes=w.nodes;if(Array.isArray(w.edges))state.edges=w.edges;if(w.zoom)state.workflowZoom=w.zoom}state.boot=await api("/api/boot");const me=await api("/api/me");state.user=me.user}catch{}render()})();
