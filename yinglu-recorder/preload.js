@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('yinglu', {
   getSettings: () => ipcRenderer.invoke('settings:get'),
   saveSettings: (next) => ipcRenderer.invoke('settings:save', next),
   storage: () => ipcRenderer.invoke('system:storage'),
+  recordingGuard: (payload) => ipcRenderer.invoke('recording:guard', payload),
   openFolder: () => ipcRenderer.invoke('output:open'),
   listOutput: () => ipcRenderer.invoke('output:list'),
   openFile: (p) => ipcRenderer.invoke('file:open', p),
