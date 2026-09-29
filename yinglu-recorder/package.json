@@ -1,0 +1,44 @@
+{
+  "name": "yinglu-screen",
+  "productName": "映录 Screen",
+  "version": "1.0.0",
+  "description": "Windows screen recorder",
+  "main": "main.js",
+  "author": "YingLu Studio",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis portable --x64"
+  },
+  "devDependencies": {
+    "electron": "44.4.5",
+    "electron-builder": "26.0.12"
+  },
+  "build": {
+    "appId": "com.yinglu.screen",
+    "productName": "映录 Screen",
+    "executableName": "YingLuScreen",
+    "asar": true,
+    "directories": { "output": "dist" },
+    "files": ["main.js","preload.js","index.html"],
+    "win": {
+      "target": [
+        {"target":"nsis","arch":["x64"]},
+        {"target":"portable","arch":["x64"]}
+      ]
+    },
+    "nsis": {
+      "artifactName": "YingLuScreen-Setup-${version}.${ext}",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "映录 Screen",
+      "runAfterFinish": true
+    },
+    "portable": {
+      "artifactName": "YingLuScreen-Portable-${version}.${ext}",
+      "requestExecutionLevel": "user"
+    }
+  }
+}
