@@ -1,6 +1,6 @@
 import {IMG,nav,inspirationItems,agents,modelPics,esc} from "./data-v181.js";
 const $=s=>document.querySelector(s);
-const state={boot:null,user:null,page:location.pathname,imageRatio:"1:1",insp:"全部",modelTab:"全部模型",agentMsgs:[],nodes:[{id:"n1",x:90,y:90,t:"文本输入"},{id:"n2",x:350,y:160,t:"AI 大模型"},{id:"n3",x:620,y:100,t:"图像生成"},{id:"n4",x:620,y:360,t:"视频生成"},{id:"n5",x:900,y:230,t:"文件输出"}]};
+const state={boot:null,user:null,page:location.pathname,imageRatio:"1:1",insp:"全部",modelTab:"全部模型",agentMsgs:[],workflowZoom:1,selectedNode:"n3",connectFrom:null,nodes:[{id:"n1",x:120,y:110,t:"文本输入"},{id:"n2",x:390,y:170,t:"AI 大模型"},{id:"n3",x:690,y:90,t:"图像生成"},{id:"n4",x:690,y:365,t:"视频生成"},{id:"n5",x:990,y:225,t:"文件输出"}],edges:[["n1","n2"],["n2","n3"],["n2","n4"],["n3","n5"],["n4","n5"]]};
 async function api(path,opt={}){const r=await fetch(path,{credentials:"include",headers:{"content-type":"application/json",...(opt.headers||{})},...opt});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"请求失败");return d}
 function toast(t){const e=$("#toast");if(!e)return;e.textContent=t;e.className="show";setTimeout(()=>e.className="",2000)}
 function go(p){history.pushState({},'',p);state.page=p;render()}
@@ -20,16 +20,15 @@ return shell(`<div class="page">${hero('用 <em>AI</em>，生成精彩视频','�
 }
 function workflowPage(){
 const nodes=state.nodes;
-const pos={n1:[120,110],n2:[390,170],n3:[690,90],n4:[690,365],n5:[990,225]};
-nodes.forEach(n=>{if(pos[n.id]){n.x=pos[n.id][0];n.y=pos[n.id][1]}})
-const edges=[[nodes[0],nodes[1]],[nodes[1],nodes[2]],[nodes[1],nodes[3]],[nodes[2],nodes[4]],[nodes[3],nodes[4]]].filter(x=>x[0]&&x[1]);
+const nodeById=Object.fromEntries(nodes.map(n=>[n.id,n]));
+const edges=(state.edges||[]).map(([a,b])=>[nodeById[a],nodeById[b]]).filter(x=>x[0]&&x[1]);
 const paths=edges.map(([a,b],i)=>{const x1=a.x+210,y1=a.y+62,x2=b.x,y2=b.y+62,dx=Math.max(70,(x2-x1)*.46);return '<path class="wf-edge '+(i===1?'accent':'')+'" d="M'+x1+' '+y1+' C '+(x1+dx)+' '+y1+', '+(x2-dx)+' '+y2+', '+x2+' '+y2+'"/>'}).join('');
 const nodeIcon=t=>t.includes('文本')?'T':t.includes('AI')?'✦':t.includes('图像')?'▧':t.includes('视频')?'▶':'▤';
 return shell(`<div class="page wf-page">
 <header class="wf-master-top">
   <div class="wf-title"><div class="wf-title-icon">⌘</div><div><h2>品牌主视觉生产线</h2><p>已自动保存 · ${nodes.length} 节点 · 5 连线</p></div></div>
-  <div class="wf-center-tools"><button class="wf-tool">↶</button><button class="wf-tool">↷</button><button class="wf-tool">−</button><button class="wf-tool">适应画布</button><button class="wf-tool">100%</button><button class="wf-tool">＋</button></div>
-  <div class="wf-actions"><button class="btn-soft">节点库</button><button class="btn-soft">模板</button><button class="btn-soft">校验</button><button class="btn-soft">保存</button><button class="btn btn-primary" data-action="run-workflow">▶ 运行工作流</button></div>
+  <div class="wf-center-tools"><button class="wf-tool" data-wf-action="undo">↶</button><button class="wf-tool" data-wf-action="redo">↷</button><button class="wf-tool" data-wf-action="zoom-out">−</button><button class="wf-tool" data-wf-action="fit">适应画布</button><button class="wf-tool" id="wf-zoom-label">100%</button><button class="wf-tool" data-wf-action="zoom-in">＋</button></div>
+  <div class="wf-actions"><button class="btn-soft" data-wf-action="library">节点库</button><button class="btn-soft" data-wf-action="template">模板</button><button class="btn-soft" data-wf-action="validate">校验</button><button class="btn-soft" data-wf-action="auto-layout">自动布局</button><button class="btn-soft" data-wf-action="save">保存</button><button class="btn btn-primary" data-action="run-workflow">▶ 运行工作流</button></div>
 </header>
 <div class="wf-master">
   <aside class="wf-library">
@@ -53,12 +52,12 @@ return shell(`<div class="page wf-page">
   </aside>
   <section class="wf-canvas-master" id="wf-canvas">
     <svg class="wf-edge-layer" viewBox="0 0 1500 900" preserveAspectRatio="none">${paths}</svg>
-    ${nodes.map((n,i)=>`<article class="wf-node ${i===2?'selected':''}" style="left:${n.x}px;top:${n.y}px">
-      <span class="wf-port in"></span>
+    ${nodes.map((n,i)=>`<article class="wf-node ${state.selectedNode===n.id?'selected':''}" data-node-id="${n.id}" style="left:${n.x}px;top:${n.y}px">
+      <span class="wf-port in" data-port="in" data-node-id="${n.id}"></span>
       <div class="wf-node-head"><i>${nodeIcon(n.t)}</i><div><strong>${n.t}</strong><small>${n.t.includes('视频')?'基于图像生成动态视频':n.t.includes('图像')?'生成或处理高质量图像':n.t.includes('AI')?'对输入内容进行智能处理':'提供工作流输入与输出'}</small></div><button>•••</button></div>
       <div class="wf-node-value">${n.t==='文本输入'?'高端东方香氛，极简白底，商业…':n.t==='AI 大模型'?'增强结构、光影和材质描述':n.t==='图像生成'?'GPT-Image 2.5 · 2K':n.t==='视频生成'?'Veo 3.1 · 1080p':'PNG · 素材库'}</div>
       <div class="wf-node-foot"><span>预计 ${i*3+2} pts</span><button>▶</button></div>
-      <span class="wf-port out"></span>
+      <span class="wf-port out" data-port="out" data-node-id="${n.id}"></span>
     </article>`).join('')}
     <div class="wf-minimap"><span></span><span></span><span></span><span></span><span></span></div>
     <div class="wf-status"><i></i>工作流已就绪　 <b>${nodes.length} 个启用节点</b>　预计 85 pts</div>
@@ -106,7 +105,7 @@ const g=e.target.closest("[data-go]");if(g){go(g.dataset.go);return}
 const r=e.target.closest("[data-ratio]");if(r){state.imageRatio=r.dataset.ratio;render();return}
 const i=e.target.closest("[data-insp]");if(i){state.insp=i.dataset.insp;render();return}
 const m=e.target.closest("[data-model-tab]");if(m){state.modelTab=m.dataset.modelTab;render();return}
-const add=e.target.closest("[data-add-node]");if(add){state.nodes.push({id:crypto.randomUUID(),x:180+Math.random()*600,y:80+Math.random()*500,t:add.dataset.addNode});render();return}
+const add=e.target.closest("[data-add-node]");if(add){const id=crypto.randomUUID();state.nodes.push({id,x:220+Math.random()*520,y:100+Math.random()*420,t:add.dataset.addNode});state.selectedNode=id;render();toast("已添加 "+add.dataset.addNode);return}
 const auth=e.target.closest("[data-auth]");if(auth){try{const kind=auth.dataset.auth;const payload={email:$("#auth-email").value,password:$("#auth-password").value,name:$("#auth-name")?.value};const d=await api("/api/auth/"+kind,{method:"POST",body:JSON.stringify(payload)});state.user=d.user;go("/");toast(kind==="login"?"登录成功":"注册成功")}catch(err){toast(err.message)}return}
 const a=e.target.closest("[data-action]");if(!a)return;
 try{
