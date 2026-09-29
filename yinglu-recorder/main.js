@@ -71,9 +71,9 @@ function formatType(name){
 function createWindow(){
   win = new BrowserWindow({
     width: 1520,
-    height: 940,
+    height: 951,
     minWidth: 1180,
-    minHeight: 760,
+    minHeight: 738,
     title: '映录 Screen',
     backgroundColor: '#F4F6FA',
     frame: false,
@@ -84,6 +84,7 @@ function createWindow(){
       nodeIntegration: false
     }
   });
+  win.setAspectRatio(1586 / 992);
   win.loadFile('index.html');
   win.once('ready-to-show', () => win.show());
 }
