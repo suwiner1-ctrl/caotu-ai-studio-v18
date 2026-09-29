@@ -30,8 +30,14 @@ jobs:
           node --check renderer.js
           $html = Get-Content index.html -Raw
           if ($html -notmatch 'id="recordBtn"') { throw 'recordBtn missing' }
-          if ($html -notmatch 'id="keepAwakeToggle"') { throw 'stability controls missing' }
-          if ((Get-Content package.json -Raw | ConvertFrom-Json).version -ne "1.8.0") { throw "Wrong version" }
+          if ($html -notmatch 'id="selectSourceBtn"') { throw 'source selector missing' }
+          if ($html -notmatch 'id="sysAudio"') { throw 'system audio missing' }
+          if ($html -notmatch 'id="micAudio"') { throw 'microphone control missing' }
+          if ($html -notmatch 'id="cameraToggle"') { throw 'camera control missing' }
+          if ($html -notmatch 'id="resolution"') { throw 'quality control missing' }
+          if ($html -notmatch 'id="watermarkText"') { throw 'watermark control missing' }
+          if ($html -match 'id="pixelUI"') { throw 'fake screenshot overlay still present' }
+          if ((Get-Content package.json -Raw | ConvertFrom-Json).version -ne "1.9.0") { throw "Wrong version" }
       - name: Build Windows EXEs
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
@@ -40,8 +46,8 @@ jobs:
         shell: pwsh
         run: |
           $files = @(
-            "dist/YingLuScreen-Setup-1.8.0.exe",
-            "dist/YingLuScreen-Portable-1.8.0.exe"
+            "dist/YingLuScreen-Setup-1.9.0.exe",
+            "dist/YingLuScreen-Portable-1.9.0.exe"
           )
           foreach($f in $files){
             if(!(Test-Path $f)){ throw "Missing $f" }
@@ -52,10 +58,10 @@ jobs:
           Get-FileHash $files -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  $([IO.Path]::GetFileName($_.Path))" } | Set-Content -Encoding ascii dist/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: YingLuScreen-Windows-v1.8.0
+          name: YingLuScreen-Windows-v1.9.0
           path: |
-            yinglu-recorder/dist/YingLuScreen-Setup-1.8.0.exe
-            yinglu-recorder/dist/YingLuScreen-Portable-1.8.0.exe
+            yinglu-recorder/dist/YingLuScreen-Setup-1.9.0.exe
+            yinglu-recorder/dist/YingLuScreen-Portable-1.9.0.exe
             yinglu-recorder/dist/SHA256SUMS.txt
           if-no-files-found: error
           compression-level: 0
