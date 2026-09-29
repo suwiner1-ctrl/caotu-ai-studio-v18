@@ -1,5 +1,4 @@
-@import url("/ui-v181-base.css?v=18.1.0");
-@import url("/ui-v181-layout.css?v=18.1.0");
-@import url("/ui-v181-home.css?v=18.1.0");
-@import url("/ui-v181-creation.css?v=18.1.0");
-@import url("/ui-v181-support.css?v=18.1.0");
+@import url("/v19-core.css?v=19.0.0");
+@import url("/v19-pages.css?v=19.0.0");
+@import url("/v19-workflow.css?v=19.0.0");
+@import url("/v19-responsive.css?v=19.0.0");
